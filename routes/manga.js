@@ -4,7 +4,13 @@ const db = require('../db/database') // Assuming you have a db.js file for datab
 
 // Alle Mangas abrufen
 router.get('/', (req, res) => {
-    const mangas = db.prepare('SELECT * FROM mangas order by title, band').all();
+    const rows = db.prepare('SELECT * FROM mangas order by title, band').all();
+    const manags = rows.map(row => ({
+        ...m,
+        read: !!m.read,
+        new_buy:  !!m.new_buy,
+        double: !!m.double
+    }));
     res.json(mangas);
 });
 

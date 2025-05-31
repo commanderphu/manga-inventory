@@ -14,9 +14,9 @@ CREATE TABLE IF NOT EXISTS mangas (
     isbn TEXT,
     sprache TEXT,
     cover_url TEXT
-    read TEXT DEFAULT 'false'
-    double TEXT DEFAULT 'false'
-    new_buy TEXT 
+    read INTEGER DEFAULT 0, -- 0 für false, 1 für true
+    double INTEGER DEFAULT 0, -- 0 für false, 1 für true
+    new_buy INTEGER DEFAULT 0 -- 0 für false, 1 für true
 );
 `).run();
 
