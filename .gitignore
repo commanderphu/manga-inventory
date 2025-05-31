@@ -1,0 +1,19 @@
+node_modules/
+dist/
+# Logs
+logs
+npm-debug.log*
+# Dependency directories
+jspm_packages/
+# Optional npm cache directory
+.npm
+# Optional eslint cache
+.eslintcache
+# Optional REPL history
+.repl
+# Optional VS Code settings
+.vscode/
+# Optional IntelliJ IDEA files
+.idea/
+# Optional coverage directory
+coverage/
