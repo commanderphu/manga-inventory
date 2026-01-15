@@ -1,21 +1,21 @@
 {
   "project_info": {
-    "project_number": "123456789",
-    "project_id": "manga-inventory-placeholder",
-    "storage_bucket": "manga-inventory-placeholder.appspot.com"
+    "project_number": "395277248474",
+    "project_id": "manga-inventory",
+    "storage_bucket": "manga-inventory.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:123456789:android:abc123def456",
+        "mobilesdk_app_id": "1:395277248474:android:c17ddd6f0e0b8741b2c2e3",
         "android_client_info": {
-          "package_name": "com.phudev.manga_app"
+          "package_name": "com.phudevelopement.manga_flutter_app"
         }
       },
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": "PLACEHOLDER_API_KEY"
+          "current_key": "AIzaSyC3cZhnwEUNbpQRJi6zQC5awY9BrRDxJP8"
         }
       ],
       "services": {

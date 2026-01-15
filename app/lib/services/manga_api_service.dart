@@ -3,7 +3,7 @@ import 'package:http/http.dart' as http;
 import '../models/manga.dart';
 
 class MangaApiService {
-  static const String baseUrl = 'https://manga-api.intern.phudevelopement.xyz';
+  static const String baseUrl = 'https://manga-api.phudevelopement.xyz';
   static const String apiKey = 'NTfvGXfVZf3MEgyr56qQbk5Y3Zxfj6A/kI68GnD97hs=';
 
   final String? authToken;
