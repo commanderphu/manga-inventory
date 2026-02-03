@@ -1,4 +1,7 @@
-import { supabase } from "./supabase"
+// API Client for Manga Inventory REST API
+
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "https://manga-api.phudevelopement.xyz"
+const API_KEY = process.env.NEXT_PUBLIC_API_KEY || ""
 
 export interface Manga {
   id: string
@@ -34,8 +37,8 @@ export interface PaginatedResponse<T> {
   totalPages: number
 }
 
-// Helper function to transform database row to Manga interface
-function transformMangaFromDB(row: any): Manga {
+// Helper function to transform API response to Manga interface
+function transformMangaFromAPI(row: any): Manga {
   return {
     id: row.id,
     titel: row.titel || "",
@@ -54,21 +57,44 @@ function transformMangaFromDB(row: any): Manga {
   }
 }
 
-// Helper function to transform Manga interface to database row
-function transformMangaToDB(manga: CreateMangaRequest | UpdateMangaRequest) {
-  return {
-    titel: manga.titel,
-    band: manga.band,
-    genre: manga.genre,
-    autor: manga.autor,
-    verlag: manga.verlag,
-    isbn: manga.isbn,
-    sprache: manga.sprache,
-    cover_image: manga.coverImage,
-    read: manga.read,
-    double: manga.double,
-    newbuy: manga.newbuy,
+// Helper function to transform Manga interface to API request
+function transformMangaToAPI(manga: CreateMangaRequest | UpdateMangaRequest) {
+  const result: any = {}
+
+  if (manga.titel !== undefined) result.titel = manga.titel
+  if (manga.band !== undefined) result.band = manga.band
+  if (manga.genre !== undefined) result.genre = manga.genre
+  if (manga.autor !== undefined) result.autor = manga.autor
+  if (manga.verlag !== undefined) result.verlag = manga.verlag
+  if (manga.isbn !== undefined) result.isbn = manga.isbn
+  if (manga.sprache !== undefined) result.sprache = manga.sprache
+  if (manga.coverImage !== undefined) result.cover_image = manga.coverImage
+  if (manga.read !== undefined) result.read = manga.read
+  if (manga.double !== undefined) result.double = manga.double
+  if (manga.newbuy !== undefined) result.newbuy = manga.newbuy
+
+  return result
+}
+
+// Generic fetch wrapper with authentication
+async function apiFetch<T>(endpoint: string, options: RequestInit = {}): Promise<T> {
+  const headers: HeadersInit = {
+    "Content-Type": "application/json",
+    "X-API-Key": API_KEY,
+    ...options.headers,
   }
+
+  const response = await fetch(`${API_BASE_URL}${endpoint}`, {
+    ...options,
+    headers,
+  })
+
+  if (!response.ok) {
+    const errorData = await response.json().catch(() => ({}))
+    throw new Error(errorData.message || errorData.error || `API Error: ${response.status}`)
+  }
+
+  return response.json()
 }
 
 // API Client Class
@@ -88,93 +114,58 @@ class MangaAPI {
     sortDirection?: "asc" | "desc"
   }): Promise<ApiResponse<PaginatedResponse<Manga>>> {
     try {
-      const page = params?.page || 1
-      const limit = params?.limit || 50
-      const offset = (page - 1) * limit
+      const searchParams = new URLSearchParams()
 
-      let query = supabase.from("manga").select("*", { count: "exact" })
+      if (params?.page) searchParams.set("page", params.page.toString())
+      if (params?.limit) searchParams.set("limit", params.limit.toString())
+      if (params?.search) searchParams.set("search", params.search)
+      if (params?.genre) searchParams.set("genre", params.genre)
+      if (params?.autor) searchParams.set("autor", params.autor)
+      if (params?.verlag) searchParams.set("verlag", params.verlag)
+      if (params?.sprache) searchParams.set("sprache", params.sprache)
+      if (params?.sortBy) searchParams.set("sortBy", params.sortBy)
+      if (params?.sortDirection) searchParams.set("sortOrder", params.sortDirection)
 
-      // Apply search filter
-      if (params?.search) {
-        query = query.or(`titel.ilike.%${params.search}%,autor.ilike.%${params.search}%,genre.ilike.%${params.search}%`)
-      }
-
-      // Apply filters
-      if (params?.genre) {
-        query = query.ilike("genre", `%${params.genre}%`)
-      }
-
-      if (params?.autor) {
-        query = query.eq("autor", params.autor)
-      }
-
-      if (params?.verlag) {
-        query = query.eq("verlag", params.verlag)
-      }
-
-      if (params?.sprache) {
-        query = query.eq("sprache", params.sprache)
-      }
-
-      if (params?.band) {
-        query = query.eq("band", params.band)
-      }
-
-      // Apply status filters
+      // Map status to API parameters
       if (params?.status) {
         switch (params.status) {
           case "read":
-            query = query.eq("read", true)
+            searchParams.set("read", "true")
             break
           case "unread":
-            query = query.eq("read", false)
+            searchParams.set("read", "false")
             break
           case "double":
-            query = query.eq("double", true)
+            searchParams.set("double", "true")
             break
           case "newbuy":
-            query = query.eq("newbuy", true)
+            searchParams.set("newbuy", "true")
             break
         }
       }
 
-      // Apply sorting - Database-level sorting
-      if (params?.sortBy && params?.sortDirection) {
-        const sortColumn = params.sortBy === "coverImage" ? "cover_image" : params.sortBy
-        const ascending = params.sortDirection === "asc"
+      const queryString = searchParams.toString()
+      const endpoint = `/api/manga${queryString ? `?${queryString}` : ""}`
 
-        // Handle special sorting cases
-        if (params.sortBy === "band") {
-          // Sort band numerically by casting to integer
-          query = query.order("band::int", { ascending, nullsFirst: false })
-        } else {
-          query = query.order(sortColumn, { ascending, nullsFirst: false })
+      const response = await apiFetch<{
+        data: any[]
+        pagination: {
+          page: number
+          limit: number
+          total: number
+          pages: number
         }
-      } else {
-        // Default sorting by creation date
-        query = query.order("created_at", { ascending: false })
-      }
+      }>(endpoint)
 
-      // Apply pagination
-      query = query.range(offset, offset + limit - 1)
-
-      const { data, error, count } = await query
-
-      if (error) {
-        throw new Error(error.message)
-      }
-
-      const transformedData = data?.map(transformMangaFromDB) || []
-      const total = count || 0
-      const totalPages = Math.ceil(total / limit)
+      const transformedData = response.data.map(transformMangaFromAPI)
 
       return {
         data: {
           data: transformedData,
-          total,
-          page,
-          limit,
-          totalPages,
+          total: response.pagination.total,
+          page: response.pagination.page,
+          limit: response.pagination.limit,
+          totalPages: response.pagination.pages,
         },
         message: "Manga retrieved successfully",
       }
@@ -187,18 +178,10 @@ class MangaAPI {
   // GET single manga by ID
   async getManga(id: string): Promise<ApiResponse<Manga>> {
     try {
-      const { data, error } = await supabase.from("manga").select("*").eq("id", id).single()
-
-      if (error) {
-        throw new Error(error.message)
-      }
-
-      if (!data) {
-        throw new Error("Manga not found")
-      }
+      const data = await apiFetch<any>(`/api/manga/${id}`)
 
       return {
-        data: transformMangaFromDB(data),
+        data: transformMangaFromAPI(data),
         message: "Manga retrieved successfully",
       }
     } catch (error) {
@@ -210,16 +193,15 @@ class MangaAPI {
   // POST create new manga
   async createManga(manga: CreateMangaRequest): Promise<ApiResponse<Manga>> {
     try {
-      const dbManga = transformMangaToDB(manga)
+      const apiManga = transformMangaToAPI(manga)
 
-      const { data, error } = await supabase.from("manga").insert([dbManga]).select().single()
-
-      if (error) {
-        throw new Error(error.message)
-      }
+      const data = await apiFetch<any>("/api/manga", {
+        method: "POST",
+        body: JSON.stringify(apiManga),
+      })
 
       return {
-        data: transformMangaFromDB(data),
+        data: transformMangaFromAPI(data),
         message: "Manga created successfully",
       }
     } catch (error) {
@@ -231,16 +213,15 @@ class MangaAPI {
   // PUT update manga
   async updateManga(id: string, manga: UpdateMangaRequest): Promise<ApiResponse<Manga>> {
     try {
-      const dbManga = transformMangaToDB(manga)
+      const apiManga = transformMangaToAPI(manga)
 
-      const { data, error } = await supabase.from("manga").update(dbManga).eq("id", id).select().single()
-
-      if (error) {
-        throw new Error(error.message)
-      }
+      const data = await apiFetch<any>(`/api/manga/${id}`, {
+        method: "PUT",
+        body: JSON.stringify(apiManga),
+      })
 
       return {
-        data: transformMangaFromDB(data),
+        data: transformMangaFromAPI(data),
         message: "Manga updated successfully",
       }
     } catch (error) {
@@ -252,11 +233,9 @@ class MangaAPI {
   // DELETE manga
   async deleteManga(id: string): Promise<ApiResponse<void>> {
     try {
-      const { error } = await supabase.from("manga").delete().eq("id", id)
-
-      if (error) {
-        throw new Error(error.message)
-      }
+      await apiFetch<any>(`/api/manga/${id}`, {
+        method: "DELETE",
+      })
 
       return {
         data: undefined,
@@ -271,11 +250,8 @@ class MangaAPI {
   // DELETE multiple manga
   async deleteMangas(ids: string[]): Promise<ApiResponse<void>> {
     try {
-      const { error } = await supabase.from("manga").delete().in("id", ids)
-
-      if (error) {
-        throw new Error(error.message)
-      }
+      // API doesn't support bulk delete, so we delete one by one
+      await Promise.all(ids.map((id) => this.deleteManga(id)))
 
       return {
         data: undefined,
@@ -299,21 +275,21 @@ class MangaAPI {
       const worksheet = workbook.Sheets[sheetName]
       const jsonData = XLSX.utils.sheet_to_json(worksheet)
 
-      const importedMangas: any[] = []
       const errors: string[] = []
+      let importedCount = 0
 
       for (let i = 0; i < jsonData.length; i++) {
         const row: any = jsonData[i]
         try {
-          const manga = {
-            titel: row.title || row.Title || "",
+          const manga: CreateMangaRequest = {
+            titel: row.title || row.Title || row.titel || row.Titel || "",
             band: row.band || row.Band || "",
             genre: row.genre || row.Genre || "",
             autor: row.autor || row.Autor || "",
             verlag: row.verlag || row.Verlag || "",
             isbn: row.isbn || row.ISBN || "",
             sprache: row.sprache || row.Sprache || "Deutsch",
-            cover_image: "/placeholder.svg?height=120&width=80",
+            coverImage: "/placeholder.svg?height=120&width=80",
             read: Boolean(row.read || row.Read),
             double: Boolean(row.double || row.Double),
             newbuy: Boolean(row.new_buy || row.New_Buy || row.newbuy),
@@ -324,27 +300,19 @@ class MangaAPI {
             continue
           }
 
-          importedMangas.push(manga)
+          await this.createManga(manga)
+          importedCount++
         } catch (error) {
           errors.push(`Row ${i + 2}: ${error}`)
         }
       }
 
-      // Bulk insert into Supabase
-      if (importedMangas.length > 0) {
-        const { error } = await supabase.from("manga").insert(importedMangas)
-
-        if (error) {
-          throw new Error(error.message)
-        }
-      }
-
       return {
         data: {
-          imported: importedMangas.length,
+          imported: importedCount,
           errors,
         },
-        message: `Successfully imported ${importedMangas.length} manga`,
+        message: `Successfully imported ${importedCount} manga`,
       }
     } catch (error) {
       console.error("Error importing manga:", error)
@@ -365,20 +333,24 @@ class MangaAPI {
     }>
   > {
     try {
-      // Get all manga for statistics
-      const { data: allManga, error } = await supabase.from("manga").select("*")
+      // Get summary stats from API
+      const summaryData = await apiFetch<{
+        total: string
+        read: string
+        duplicates: string
+        to_buy: string
+      }>("/api/manga/stats/summary")
 
-      if (error) {
-        throw new Error(error.message)
-      }
-
-      const mangas = allManga || []
+      // For detailed stats (byGenre, byAutor, byVerlag), we need to fetch all manga
+      // This could be optimized with additional API endpoints in the future
+      const allMangaResponse = await this.getMangas({ limit: 1000 })
+      const mangas = allMangaResponse.data.data
 
       const stats = {
-        total: mangas.length,
-        read: mangas.filter((m) => m.read).length,
-        doubles: mangas.filter((m) => m.double).length,
-        newbuys: mangas.filter((m) => m.newbuy).length,
+        total: parseInt(summaryData.total) || 0,
+        read: parseInt(summaryData.read) || 0,
+        doubles: parseInt(summaryData.duplicates) || 0,
+        newbuys: parseInt(summaryData.to_buy) || 0,
         byGenre: {} as Record<string, number>,
         byAutor: {} as Record<string, number>,
         byVerlag: {} as Record<string, number>,
@@ -420,7 +392,7 @@ class MangaAPI {
     }
   }
 
-  // GET metadata for ISBN
+  // GET metadata for ISBN (uses external APIs - Google Books / Open Library)
   async getISBNMetadata(isbn: string): Promise<ApiResponse<Partial<Manga>>> {
     try {
       // First try Google Books API
