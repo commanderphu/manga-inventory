@@ -4,6 +4,7 @@ import '../models/manga.dart';
 import '../providers/manga_providers.dart';
 import '../screens/manga_detail_screen.dart';
 import '../screens/manga_edit_screen.dart';
+import '../services/sync_service.dart';
 
 class MangaListTile extends ConsumerWidget {
   final Manga manga;
@@ -142,8 +143,7 @@ class MangaListTile extends ConsumerWidget {
             onTap: () async {
               Navigator.pop(context);
               try {
-                final apiService = ref.read(mangaApiProvider);
-                await apiService.updateManga(manga.id, {'read': !manga.read});
+                await SyncService.instance.updateManga(manga.id, {'read': !manga.read});
                 ref.invalidate(mangaListProvider);
                 ref.invalidate(statsProvider);
                 if (context.mounted) {
@@ -188,8 +188,7 @@ class MangaListTile extends ConsumerWidget {
             onPressed: () async {
               Navigator.pop(context);
               try {
-                final apiService = ref.read(mangaApiProvider);
-                await apiService.deleteManga(manga.id);
+                await SyncService.instance.deleteManga(manga.id);
                 ref.invalidate(mangaListProvider);
                 ref.invalidate(statsProvider);
                 if (context.mounted) {

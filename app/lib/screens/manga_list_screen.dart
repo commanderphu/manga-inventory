@@ -5,6 +5,7 @@ import '../providers/manga_providers.dart';
 import '../widgets/manga_list_tile.dart';
 import '../widgets/stat_card.dart';
 import '../widgets/pagination_widget.dart';
+import '../widgets/offline_banner.dart';
 import 'manga_add_screen.dart';
 
 class MangaListScreen extends ConsumerStatefulWidget {
@@ -105,76 +106,82 @@ class _MangaListScreenState extends ConsumerState<MangaListScreen> {
           ),
         ],
       ),
-      body: RefreshIndicator(
-        onRefresh: () async {
-          ref.invalidate(mangaListProvider);
-          ref.invalidate(statsProvider);
-        },
-        child: CustomScrollView(
-          slivers: [
-            // Stats Section
-            SliverToBoxAdapter(
-              child: statsAsync.when(
-                data: (stats) => StatsSection(stats: stats),
-                loading: () => const LinearProgressIndicator(),
-                error: (err, stack) => const SizedBox.shrink(),
-              ),
-            ),
-
-            // Manga List
-            mangaListAsync.when(
-              data: (response) {
-                if (response.data.isEmpty) {
-                  return const SliverFillRemaining(
-                    child: Center(
-                      child: Text('Keine Manga gefunden'),
-                    ),
-                  );
-                }
-
-                return SliverMainAxisGroup(
-                  slivers: [
-                    SliverList(
-                      delegate: SliverChildBuilderDelegate(
-                        (context, index) {
-                          final manga = response.data[index];
-                          return MangaListTile(manga: manga);
-                        },
-                        childCount: response.data.length,
-                      ),
-                    ),
-                    // Pagination
-                    SliverToBoxAdapter(
-                      child: PaginationWidget(pagination: response.pagination),
-                    ),
-                  ],
-                );
+      body: Column(
+        children: [
+          const OfflineBanner(),
+          Expanded(
+            child: RefreshIndicator(
+              onRefresh: () async {
+                ref.invalidate(mangaListProvider);
+                ref.invalidate(statsProvider);
               },
-              loading: () => const SliverFillRemaining(
-                child: Center(
-                  child: CircularProgressIndicator(),
-                ),
-              ),
-              error: (err, stack) => SliverFillRemaining(
-                child: Center(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      const Icon(Icons.error_outline, size: 48, color: Colors.red),
-                      const SizedBox(height: 16),
-                      Text('Fehler: $err'),
-                      const SizedBox(height: 16),
-                      ElevatedButton(
-                        onPressed: () => ref.refresh(mangaListProvider),
-                        child: const Text('Erneut versuchen'),
-                      ),
-                    ],
+              child: CustomScrollView(
+                slivers: [
+                  // Stats Section
+                  SliverToBoxAdapter(
+                    child: statsAsync.when(
+                      data: (stats) => StatsSection(stats: stats),
+                      loading: () => const LinearProgressIndicator(),
+                      error: (err, stack) => const SizedBox.shrink(),
+                    ),
                   ),
-                ),
+
+                  // Manga List
+                  mangaListAsync.when(
+                    data: (response) {
+                      if (response.data.isEmpty) {
+                        return const SliverFillRemaining(
+                          child: Center(
+                            child: Text('Keine Manga gefunden'),
+                          ),
+                        );
+                      }
+                      return SliverMainAxisGroup(
+                        slivers: [
+                          SliverList(
+                            delegate: SliverChildBuilderDelegate(
+                              (context, index) {
+                                final manga = response.data[index];
+                                return MangaListTile(manga: manga);
+                              },
+                              childCount: response.data.length,
+                            ),
+                          ),
+                          // Pagination
+                          SliverToBoxAdapter(
+                            child: PaginationWidget(
+                                pagination: response.pagination),
+                          ),
+                        ],
+                      );
+                    },
+                    loading: () => const SliverFillRemaining(
+                      child: Center(child: CircularProgressIndicator()),
+                    ),
+                    error: (err, stack) => SliverFillRemaining(
+                      child: Center(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            const Icon(Icons.error_outline,
+                                size: 48, color: Colors.red),
+                            const SizedBox(height: 16),
+                            Text('Fehler: $err'),
+                            const SizedBox(height: 16),
+                            ElevatedButton(
+                              onPressed: () => ref.refresh(mangaListProvider),
+                              child: const Text('Erneut versuchen'),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ),
-          ],
-        ),
+          ),
+        ],
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () async {

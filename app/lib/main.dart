@@ -7,6 +7,7 @@ import 'screens/login_screen.dart';
 import 'screens/register_screen.dart';
 import 'screens/settings_screen.dart';
 import 'providers/auth_provider.dart';
+import 'services/sync_service.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -19,6 +20,11 @@ void main() async {
     // Firebase initialization failed - notifications won't work but app will still run
     debugPrint('Firebase initialization failed: $e');
   }
+
+  // Initialize SyncService singleton and pre-warm local DB
+  SyncService.instance;
+  // Background sync on startup (no await – don't block startup)
+  SyncService.instance.syncAll();
 
   runApp(
     const ProviderScope(

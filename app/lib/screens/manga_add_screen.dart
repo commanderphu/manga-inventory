@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
 import '../models/manga.dart';
 import '../services/manga_api_service.dart';
+import '../services/sync_service.dart';
 import '../services/isbn_lookup_service.dart';
 import 'isbn_scanner_screen.dart';
 
@@ -231,13 +232,16 @@ class _MangaAddScreenState extends ConsumerState<MangaAddScreen> {
         newbuy: _newbuy,
       );
 
-      await _apiService.createManga(manga);
+      final created = await SyncService.instance.createManga(manga);
+      final isOffline = created.id.startsWith('local_');
 
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Manga erfolgreich hinzugefügt'),
-            backgroundColor: Colors.green,
+          SnackBar(
+            content: Text(isOffline
+                ? 'Offline gespeichert – wird synchronisiert'
+                : 'Manga erfolgreich hinzugefügt'),
+            backgroundColor: isOffline ? Colors.orange : Colors.green,
           ),
         );
         Navigator.pop(context, true);

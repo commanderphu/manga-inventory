@@ -1,11 +1,14 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../models/manga.dart';
 import '../services/manga_api_service.dart';
+import '../services/sync_service.dart';
 import 'auth_provider.dart';
+import 'connectivity_provider.dart';
 
-// Provider for manga API service with auth token
+// Provider for manga API service with auth token (also keeps SyncService in sync)
 final mangaApiProvider = Provider((ref) {
   final authToken = ref.watch(authTokenProvider).value;
+  SyncService.instance.setAuthToken(authToken);
   return MangaApiService(authToken: authToken);
 });
 
@@ -23,21 +26,24 @@ final newbuyFilterProvider = StateProvider<bool?>((ref) => null);
 final currentPageProvider = StateProvider<int>((ref) => 1);
 final itemsPerPageProvider = StateProvider<int>((ref) => 20);
 
-// Provider for manga list with filters and pagination
-final mangaListProvider = FutureProvider.autoDispose<MangaListResponse>((ref) async {
-  final apiService = ref.watch(mangaApiProvider);
+// Provider for manga list – uses SyncService (online → API, offline → local DB)
+final mangaListProvider =
+    FutureProvider.autoDispose<MangaListResponse>((ref) async {
+  // Watch connectivity to auto-refresh when coming back online
+  ref.watch(connectivityProvider);
+
   final search = ref.watch(searchQueryProvider);
   final genre = ref.watch(genreFilterProvider);
   final autor = ref.watch(autorFilterProvider);
   final verlag = ref.watch(verlagFilterProvider);
   final sprache = ref.watch(spracheFilterProvider);
   final read = ref.watch(readFilterProvider);
-  final double = ref.watch(doubleFilterProvider);
+  final isDouble = ref.watch(doubleFilterProvider);
   final newbuy = ref.watch(newbuyFilterProvider);
   final page = ref.watch(currentPageProvider);
   final limit = ref.watch(itemsPerPageProvider);
 
-  return await apiService.getMangas(
+  return await SyncService.instance.getMangas(
     page: page,
     limit: limit,
     search: search.isEmpty ? null : search,
@@ -46,13 +52,13 @@ final mangaListProvider = FutureProvider.autoDispose<MangaListResponse>((ref) as
     verlag: verlag,
     sprache: sprache,
     read: read,
-    double: double,
+    isDouble: isDouble,
     newbuy: newbuy,
   );
 });
 
-// Provider for stats
+// Provider for stats – uses SyncService
 final statsProvider = FutureProvider.autoDispose<MangaStats>((ref) async {
-  final apiService = ref.watch(mangaApiProvider);
-  return await apiService.getStats();
+  ref.watch(connectivityProvider);
+  return await SyncService.instance.getStats();
 });

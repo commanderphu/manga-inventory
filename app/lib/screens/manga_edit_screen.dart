@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
 import '../models/manga.dart';
 import '../services/manga_api_service.dart';
+import '../services/sync_service.dart';
 import '../services/isbn_lookup_service.dart';
 import 'isbn_scanner_screen.dart';
 
@@ -168,16 +169,19 @@ class _MangaEditScreenState extends ConsumerState<MangaEditScreen> {
         'newbuy': _newbuy,
       };
 
-      await _apiService.updateManga(widget.manga.id, updates);
+      final updated = await SyncService.instance.updateManga(widget.manga.id, updates);
+      final isOffline = !SyncService.instance.isOnline;
 
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Manga erfolgreich aktualisiert'),
-            backgroundColor: Colors.green,
+          SnackBar(
+            content: Text(isOffline
+                ? 'Offline gespeichert – wird synchronisiert'
+                : 'Manga erfolgreich aktualisiert'),
+            backgroundColor: isOffline ? Colors.orange : Colors.green,
           ),
         );
-        Navigator.pop(context, true); // Return true to indicate success
+        Navigator.pop(context, true);
       }
     } catch (e) {
       if (mounted) {
