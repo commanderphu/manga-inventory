@@ -49,7 +49,7 @@ Next.js 15 Web-Anwendung mit modernem UI
 - Next.js 15.2 mit React 19
 - TypeScript
 - TailwindCSS + shadcn/ui
-- Supabase Client
+- REST-API Client (fetch)
 - Excel-Import (xlsx)
 - Barcode-Scanner (@zxing)
 
@@ -66,7 +66,7 @@ Next.js 15 Web-Anwendung mit modernem UI
 cd frontend
 pnpm install
 cp .env.local.example .env.local
-# .env.local mit Supabase-Credentials befüllen
+# .env.local mit API-URL und API-Key befüllen
 pnpm dev
 ```
 
@@ -185,6 +185,7 @@ PostgreSQL-Datenbank mit 138+ Manga-Einträgen
 - TypeScript
 - TailwindCSS
 - Radix UI (via shadcn/ui)
+- REST-API Client (fetch)
 - Zod (Validation)
 - React Hook Form
 - date-fns

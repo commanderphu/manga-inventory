@@ -2,8 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import '../models/manga.dart';
+import '../providers/manga_providers.dart';
+import '../widgets/detail_card.dart';
 import 'manga_edit_screen.dart';
-import 'manga_list_screen.dart';
 
 class MangaDetailScreen extends ConsumerWidget {
   final Manga manga;
@@ -94,41 +95,41 @@ class MangaDetailScreen extends ConsumerWidget {
                   const SizedBox(height: 24),
 
                   // Details Section
-                  _DetailCard(
+                  DetailCard(
                     title: 'Informationen',
                     children: [
                       if (manga.band != null)
-                        _DetailRow(
+                        DetailRow(
                           icon: Icons.numbers,
                           label: 'Band',
                           value: manga.band!,
                         ),
                       if (manga.autor != null)
-                        _DetailRow(
+                        DetailRow(
                           icon: Icons.person,
                           label: 'Autor',
                           value: manga.autor!,
                         ),
                       if (manga.genre != null)
-                        _DetailRow(
+                        DetailRow(
                           icon: Icons.category,
                           label: 'Genre',
                           value: manga.genre!,
                         ),
                       if (manga.verlag != null)
-                        _DetailRow(
+                        DetailRow(
                           icon: Icons.business,
                           label: 'Verlag',
                           value: manga.verlag!,
                         ),
                       if (manga.sprache != null)
-                        _DetailRow(
+                        DetailRow(
                           icon: Icons.language,
                           label: 'Sprache',
                           value: manga.sprache!,
                         ),
                       if (manga.isbn != null)
-                        _DetailRow(
+                        DetailRow(
                           icon: Icons.qr_code,
                           label: 'ISBN',
                           value: manga.isbn!,
@@ -139,17 +140,17 @@ class MangaDetailScreen extends ConsumerWidget {
 
                   // Timestamps
                   if (manga.createdAt != null || manga.updatedAt != null)
-                    _DetailCard(
+                    DetailCard(
                       title: 'Zeitstempel',
                       children: [
                         if (manga.createdAt != null)
-                          _DetailRow(
+                          DetailRow(
                             icon: Icons.add_circle_outline,
                             label: 'Erstellt',
                             value: dateFormat.format(manga.createdAt!),
                           ),
                         if (manga.updatedAt != null)
-                          _DetailRow(
+                          DetailRow(
                             icon: Icons.update,
                             label: 'Zuletzt aktualisiert',
                             value: dateFormat.format(manga.updatedAt!),
@@ -277,84 +278,3 @@ class MangaDetailScreen extends ConsumerWidget {
   }
 }
 
-class _DetailCard extends StatelessWidget {
-  final String title;
-  final List<Widget> children;
-
-  const _DetailCard({
-    required this.title,
-    required this.children,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    if (children.isEmpty) return const SizedBox.shrink();
-
-    return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              title,
-              style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                    fontWeight: FontWeight.bold,
-                  ),
-            ),
-            const SizedBox(height: 12),
-            ...children,
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class _DetailRow extends StatelessWidget {
-  final IconData icon;
-  final String label;
-  final String value;
-
-  const _DetailRow({
-    required this.icon,
-    required this.label,
-    required this.value,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 12.0),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Icon(
-            icon,
-            size: 20,
-            color: Theme.of(context).colorScheme.primary,
-          ),
-          const SizedBox(width: 12),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  label,
-                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                        color: Theme.of(context).colorScheme.onSurfaceVariant,
-                      ),
-                ),
-                const SizedBox(height: 2),
-                Text(
-                  value,
-                  style: Theme.of(context).textTheme.bodyLarge,
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
