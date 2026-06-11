@@ -145,11 +145,10 @@ async function main() {
   console.log();
 
   try {
-    // Find all manga without cover images
+    // Find all manga
     let query = `
       SELECT id, titel, band, isbn, autor, verlag
       FROM manga
-      WHERE cover_image IS NULL
       ORDER BY created_at DESC
     `;
 
@@ -160,10 +159,10 @@ async function main() {
     const result = await pool.query(query);
     const mangaList = result.rows;
 
-    console.log(`Found ${mangaList.length} manga without cover images\n`);
+    console.log(`Found ${mangaList.length} manga\n`);
 
     if (mangaList.length === 0) {
-      console.log('✓ All manga have cover images!');
+      console.log('✓ Keine Manga in der Datenbank!');
       return;
     }
 
