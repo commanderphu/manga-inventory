@@ -78,6 +78,7 @@ function EnhancedPagination({
   totalItems,
   itemsPerPage,
   onPageChange,
+  onPageSizeChange,
   loading = false,
 }: {
   currentPage: number
@@ -85,6 +86,7 @@ function EnhancedPagination({
   totalItems: number
   itemsPerPage: number
   onPageChange: (page: number) => void
+  onPageSizeChange: (size: number) => void
   loading?: boolean
 }) {
   const [jumpToPage, setJumpToPage] = useState("")
@@ -149,8 +151,8 @@ function EnhancedPagination({
             <Select
               value={itemsPerPage.toString()}
               onValueChange={(value) => {
-                // This would need to be implemented in the parent component
-                console.log("Change page size to:", value)
+                onPageChange(1)
+                onPageSizeChange(Number(value))
               }}
               disabled={loading}
             >
@@ -411,7 +413,7 @@ function MangaCollectionContent() {
   })
 
   const [page, setPage] = useState(Number(searchParams.get("page")) || 1)
-  const pageSize = 20
+  const [pageSize, setPageSize] = useState(Number(searchParams.get("limit")) || 20)
 
   const totalPages = Math.ceil(total / pageSize)
 
@@ -473,6 +475,15 @@ function MangaCollectionContent() {
   const handlePageChange = (newPage: number) => {
     setPage(newPage)
     updateURL(filters, searchTerm, sortConfig, newPage)
+  }
+
+  const handlePageSizeChange = (newSize: number) => {
+    setPageSize(newSize)
+    setPage(1)
+    const params = new URLSearchParams(searchParams)
+    params.set("limit", newSize.toString())
+    params.set("page", "1")
+    router.push(`?${params.toString()}`, { scroll: false })
   }
 
   // Filter options from existing data
@@ -1198,8 +1209,9 @@ function MangaCollectionContent() {
                       <Select
                         value={filters.genre}
                         onValueChange={(value) => {
-                          setFilters({ ...filters, genre: value })
-                          updateURL({ ...filters, genre: value }, searchTerm, sortConfig, 1)
+                          const v = value === "all" ? "" : value
+                          setFilters({ ...filters, genre: v })
+                          updateURL({ ...filters, genre: v }, searchTerm, sortConfig, 1)
                         }}
                         disabled={loading}
                       >
@@ -1222,8 +1234,9 @@ function MangaCollectionContent() {
                       <Select
                         value={filters.autor}
                         onValueChange={(value) => {
-                          setFilters({ ...filters, autor: value })
-                          updateURL({ ...filters, autor: value }, searchTerm, sortConfig, 1)
+                          const v = value === "all" ? "" : value
+                          setFilters({ ...filters, autor: v })
+                          updateURL({ ...filters, autor: v }, searchTerm, sortConfig, 1)
                         }}
                         disabled={loading}
                       >
@@ -1246,8 +1259,9 @@ function MangaCollectionContent() {
                       <Select
                         value={filters.verlag}
                         onValueChange={(value) => {
-                          setFilters({ ...filters, verlag: value })
-                          updateURL({ ...filters, verlag: value }, searchTerm, sortConfig, 1)
+                          const v = value === "all" ? "" : value
+                          setFilters({ ...filters, verlag: v })
+                          updateURL({ ...filters, verlag: v }, searchTerm, sortConfig, 1)
                         }}
                         disabled={loading}
                       >
@@ -1270,8 +1284,9 @@ function MangaCollectionContent() {
                       <Select
                         value={filters.sprache}
                         onValueChange={(value) => {
-                          setFilters({ ...filters, sprache: value })
-                          updateURL({ ...filters, sprache: value }, searchTerm, sortConfig, 1)
+                          const v = value === "all" ? "" : value
+                          setFilters({ ...filters, sprache: v })
+                          updateURL({ ...filters, sprache: v }, searchTerm, sortConfig, 1)
                         }}
                         disabled={loading}
                       >
@@ -1294,8 +1309,9 @@ function MangaCollectionContent() {
                       <Select
                         value={filters.band}
                         onValueChange={(value) => {
-                          setFilters({ ...filters, band: value })
-                          updateURL({ ...filters, band: value }, searchTerm, sortConfig, 1)
+                          const v = value === "all" ? "" : value
+                          setFilters({ ...filters, band: v })
+                          updateURL({ ...filters, band: v }, searchTerm, sortConfig, 1)
                         }}
                         disabled={loading}
                       >
@@ -1318,8 +1334,9 @@ function MangaCollectionContent() {
                       <Select
                         value={filters.status}
                         onValueChange={(value) => {
-                          setFilters({ ...filters, status: value })
-                          updateURL({ ...filters, status: value }, searchTerm, sortConfig, 1)
+                          const v = value === "all" ? "" : value
+                          setFilters({ ...filters, status: v })
+                          updateURL({ ...filters, status: v }, searchTerm, sortConfig, 1)
                         }}
                         disabled={loading}
                       >
@@ -1446,17 +1463,17 @@ function MangaCollectionContent() {
                           <div className="w-12 h-16 bg-gradient-to-br from-purple-100 to-pink-100 rounded-lg flex items-center justify-center overflow-hidden shadow-sm">
                             {manga.coverImage ? (
                               <img
-                                src={manga.coverImage || "/placeholder.svg"}
+                                src={manga.coverImage}
                                 alt={`Cover von ${manga.titel}`}
                                 className="w-full h-full object-cover rounded-lg"
                                 onError={(e) => {
                                   const target = e.target as HTMLImageElement
                                   target.style.display = "none"
-                                  target.nextElementSibling?.classList.remove("hidden")
+                                  target.nextElementSibling?.removeAttribute("hidden")
                                 }}
                               />
                             ) : null}
-                            <BookOpen className="h-6 w-6 text-purple-400" />
+                            <BookOpen hidden={!!manga.coverImage} className="h-6 w-6 text-purple-400" />
                           </div>
                         </TableCell>
                         <TableCell className="font-medium text-purple-900">
@@ -1581,6 +1598,7 @@ function MangaCollectionContent() {
               totalItems={total}
               itemsPerPage={pageSize}
               onPageChange={handlePageChange}
+              onPageSizeChange={handlePageSizeChange}
               loading={loading}
             />
           )}

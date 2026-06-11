@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server"
-import { backendFetch } from "../_proxy"
+import { backendFetch } from "../../_proxy"
 
 export async function GET() {
   const res = await backendFetch("/api/manga/stats/summary")

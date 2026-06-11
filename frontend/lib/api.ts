@@ -1,8 +1,5 @@
 // API Client for Manga Inventory REST API
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "https://manga-api.phudevelopement.xyz"
-const API_KEY = process.env.NEXT_PUBLIC_API_KEY || ""
-
 export interface Manga {
   id: string
   titel: string
@@ -76,17 +73,14 @@ function transformMangaToAPI(manga: CreateMangaRequest | UpdateMangaRequest) {
   return result
 }
 
-// Generic fetch wrapper with authentication
+// Generic fetch wrapper — calls Next.js route handlers (server adds API key)
 async function apiFetch<T>(endpoint: string, options: RequestInit = {}): Promise<T> {
-  const headers: HeadersInit = {
-    "Content-Type": "application/json",
-    "X-API-Key": API_KEY,
-    ...options.headers,
-  }
-
-  const response = await fetch(`${API_BASE_URL}${endpoint}`, {
+  const response = await fetch(endpoint, {
     ...options,
-    headers,
+    headers: {
+      "Content-Type": "application/json",
+      ...options.headers,
+    },
   })
 
   if (!response.ok) {
@@ -392,63 +386,9 @@ class MangaAPI {
     }
   }
 
-  // GET metadata for ISBN (uses external APIs - Google Books / Open Library)
+  // GET metadata for ISBN via server-side route (calls Google Books / Open Library)
   async getISBNMetadata(isbn: string): Promise<ApiResponse<Partial<Manga>>> {
-    try {
-      // First try Google Books API
-      const googleBooksResponse = await fetch(`https://www.googleapis.com/books/v1/volumes?q=isbn:${isbn}`)
-      const googleData = await googleBooksResponse.json()
-
-      if (googleData.totalItems > 0) {
-        const book = googleData.items[0].volumeInfo
-
-        const mangaData = {
-          titel: book.title || "",
-          autor: book.authors ? book.authors.join(", ") : "",
-          verlag: book.publisher || "",
-          isbn: isbn,
-          genre: book.categories ? book.categories.join(", ") : "",
-          sprache: book.language === "de" ? "Deutsch" : book.language || "Deutsch",
-          coverImage: book.imageLinks?.thumbnail || "",
-        }
-
-        return {
-          data: mangaData,
-          message: "Metadata retrieved successfully",
-        }
-      }
-
-      // If Google Books fails, try Open Library as fallback
-      const openLibraryResponse = await fetch(
-        `https://openlibrary.org/api/books?bibkeys=ISBN:${isbn}&format=json&jscmd=data`,
-      )
-      const openLibraryData = await openLibraryResponse.json()
-
-      if (openLibraryData[`ISBN:${isbn}`]) {
-        const book = openLibraryData[`ISBN:${isbn}`]
-
-        const mangaData = {
-          titel: book.title || "",
-          autor: book.authors ? book.authors.map((a: any) => a.name).join(", ") : "",
-          verlag: book.publishers ? book.publishers[0].name : "",
-          isbn: isbn,
-          genre: "",
-          sprache: "Deutsch",
-          coverImage: book.cover?.medium || "",
-        }
-
-        return {
-          data: mangaData,
-          message: "Metadata retrieved successfully",
-        }
-      }
-
-      // No data found
-      throw new Error("No metadata found for this ISBN")
-    } catch (error) {
-      console.error("Error fetching ISBN metadata:", error)
-      throw error
-    }
+    return apiFetch<ApiResponse<Partial<Manga>>>(`/api/manga/isbn?isbn=${encodeURIComponent(isbn)}`)
   }
 }
 
