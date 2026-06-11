@@ -116,6 +116,7 @@ class _MangaListScreenState extends ConsumerState<MangaListScreen> {
                 ref.invalidate(statsProvider);
               },
               child: CustomScrollView(
+                padding: const EdgeInsets.only(bottom: 80),
                 slivers: [
                   // Stats Section
                   SliverToBoxAdapter(
