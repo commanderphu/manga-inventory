@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const pool = require('../../config/database');
+const notificationService = require('../services/notificationService');
 
 /**
  * GET /api/manga - Get all manga with pagination and filters
@@ -122,6 +123,31 @@ router.get('/', async (req, res) => {
 });
 
 /**
+ * GET /api/manga/stats/summary - Get statistics
+ */
+router.get('/stats/summary', async (req, res) => {
+  try {
+    const result = await pool.query(`
+      SELECT
+        COUNT(*) as total,
+        COUNT(CASE WHEN read = true THEN 1 END) as read,
+        COUNT(CASE WHEN double = true THEN 1 END) as duplicates,
+        COUNT(CASE WHEN newbuy = true THEN 1 END) as to_buy
+      FROM manga
+    `);
+
+    res.json(result.rows[0]);
+
+  } catch (error) {
+    console.error('Error fetching stats:', error);
+    res.status(500).json({
+      error: 'Internal Server Error',
+      message: error.message
+    });
+  }
+});
+
+/**
  * GET /api/manga/:id - Get single manga by ID
  */
 router.get('/:id', async (req, res) => {
@@ -194,7 +220,6 @@ router.post('/', async (req, res) => {
       );
 
       // Send notification to other users
-      const notificationService = require('../services/notificationService');
       await notificationService.sendMangaActivityNotification(
         userId,
         'create',
@@ -271,7 +296,6 @@ router.put('/:id', async (req, res) => {
       );
 
       // Send notification to other users
-      const notificationService = require('../services/notificationService');
       await notificationService.sendMangaActivityNotification(
         userId,
         'update',
@@ -319,7 +343,6 @@ router.delete('/:id', async (req, res) => {
       );
 
       // Send notification to other users
-      const notificationService = require('../services/notificationService');
       await notificationService.sendMangaActivityNotification(
         userId,
         'delete',
@@ -335,31 +358,6 @@ router.delete('/:id', async (req, res) => {
 
   } catch (error) {
     console.error('Error deleting manga:', error);
-    res.status(500).json({
-      error: 'Internal Server Error',
-      message: error.message
-    });
-  }
-});
-
-/**
- * GET /api/manga/stats - Get statistics
- */
-router.get('/stats/summary', async (req, res) => {
-  try {
-    const result = await pool.query(`
-      SELECT
-        COUNT(*) as total,
-        COUNT(CASE WHEN read = true THEN 1 END) as read,
-        COUNT(CASE WHEN double = true THEN 1 END) as duplicates,
-        COUNT(CASE WHEN newbuy = true THEN 1 END) as to_buy
-      FROM manga
-    `);
-
-    res.json(result.rows[0]);
-
-  } catch (error) {
-    console.error('Error fetching stats:', error);
     res.status(500).json({
       error: 'Internal Server Error',
       message: error.message
