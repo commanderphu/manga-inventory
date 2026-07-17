@@ -4,6 +4,8 @@ const cors = require('cors');
 const helmet = require('helmet');
 const morgan = require('morgan');
 const rateLimit = require('express-rate-limit');
+const swaggerUi = require('swagger-ui-express');
+const swaggerSpec = require('./swagger');
 
 const authenticate = require('./middleware/auth');
 const { optionalAuth } = require('./middleware/authJwt');
@@ -60,6 +62,10 @@ const limiter = rateLimit({
 });
 
 app.use('/api/', limiter);
+
+// API Docs
+app.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+app.get('/docs.json', (req, res) => res.json(swaggerSpec));
 
 // Health check (no auth required)
 app.get('/health', (req, res) => {
