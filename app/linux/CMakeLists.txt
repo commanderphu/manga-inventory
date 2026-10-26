@@ -74,6 +74,13 @@ set_target_properties(${BINARY_NAME}
 # them to the application.
 include(flutter/generated_plugins.cmake)
 
+# flutter_secure_storage_linux 1.x bringt eine alte nlohmann/json.hpp mit, die
+# ab Clang 20 -Wdeprecated-literal-operator auslöst — mit -Werror bricht der
+# Build ab. Nur für dieses Plugin abschalten; entfällt mit dem Update auf
+# flutter_secure_storage >= 10.
+target_compile_options(flutter_secure_storage_linux_plugin PRIVATE
+  -Wno-deprecated-literal-operator)
+
 
 # === Installation ===
 # By default, "installing" just makes a relocatable bundle in the build
