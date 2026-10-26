@@ -1,10 +1,13 @@
-name: API-Image bauen
+name: API bauen und deployen
 
-# Baut das API-Image und legt es in der GitHub Container Registry ab.
-# Der DMZ-Host holt es sich von dort selbst ab (docker compose pull) — es gibt
-# bewusst KEINEN Deploy-Schritt, der von aussen auf den Server zugreift.
-# Damit braucht der Server kein Quellcode-Checkout mehr und kann nicht mehr
-# vom Repo abweichen.
+# Baut das API-Image, legt es in der GitHub Container Registry ab und spielt es
+# auf dem DMZ-Host ein (/srv/vacation, Service manga_api).
+#
+# Der Deploy-Key darf auf dem Host genau einen Befehl ausführen
+# (scripts/deploy/manga-deploy.sh als Forced Command) — keine Shell, kein
+# Forwarding. Er liegt im Environment "production", das nur für main
+# freigegeben ist; Fork-PRs kommen an das Secret nicht heran.
+# Einrichtung: scripts/deploy/setup-dmz.sh
 
 on:
   push:
@@ -65,6 +68,9 @@ jobs:
           load: true
           push: false
           tags: ${{ steps.meta.outputs.tags }}
+          # Enthält org.opencontainers.image.revision — daran prüft der
+          # Deploy-Job, ob auf dem Host wirklich dieser Commit läuft.
+          labels: ${{ steps.meta.outputs.labels }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
@@ -101,9 +107,56 @@ jobs:
             echo '```'
             echo "${{ steps.meta.outputs.tags }}"
             echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: production
+      url: https://manga-api.phudevelopement.xyz/health
+    # Ein laufender Deploy wird nie abgebrochen — sonst kann der Container
+    # mitten im Neustart hängen bleiben. Der nächste wartet einfach.
+    concurrency:
+      group: deploy-production
+      cancel-in-progress: false
+
+    steps:
+      - name: SSH-Zugang vorbereiten
+        run: |
+          install -d -m 700 ~/.ssh
+          echo "${{ secrets.DMZ_SSH_KEY }}" > ~/.ssh/deploy_key
+          chmod 600 ~/.ssh/deploy_key
+          # Host-Key fest hinterlegt statt ssh-keyscan im Lauf — sonst wäre
+          # ein untergeschobener Host nicht von dmz zu unterscheiden.
+          echo "${{ secrets.DMZ_KNOWN_HOSTS }}" > ~/.ssh/known_hosts
+
+      - name: Auf dmz einspielen
+        id: deploy
+        run: |
+          # Der Befehl ist serverseitig festgelegt; es wird nichts mitgeschickt.
+          output=$(ssh -i ~/.ssh/deploy_key -o IdentitiesOnly=yes \
+            -o StrictHostKeyChecking=yes -o ConnectTimeout=15 \
+            "manga-deploy@${{ secrets.DMZ_SSH_HOST }}")
+          echo "$output"
+          echo "$output" | grep '^revision=' >> "$GITHUB_OUTPUT"
+
+      - name: Läuft der richtige Commit?
+        run: |
+          if [ "${{ steps.deploy.outputs.revision }}" != "$GITHUB_SHA" ]; then
+            echo "Auf dmz läuft ${{ steps.deploy.outputs.revision }}, erwartet $GITHUB_SHA"
+            exit 1
+          fi
+
+      - name: Von aussen erreichbar?
+        run: curl -fsS --retry 5 --retry-delay 3 --retry-all-errors https://manga-api.phudevelopement.xyz/health
+
+      - name: Zusammenfassung
+        run: |
+          {
+            echo "### Deployed auf dmz"
             echo
-            echo "Auf dem DMZ-Host einspielen:"
-            echo '```'
-            echo "cd /srv/vacation && docker compose pull manga_api && docker compose up -d manga_api"
-            echo '```'
+            echo "Commit \`${GITHUB_SHA::7}\` läuft als \`vacation_manga_api\`."
+            echo
+            echo "Zurückrollen: in /srv/vacation das Image auf \`ghcr.io/${{ github.repository_owner }}/manga-api:sha-<vorher>\` setzen und \`docker compose up -d manga_api\`."
           } >> "$GITHUB_STEP_SUMMARY"

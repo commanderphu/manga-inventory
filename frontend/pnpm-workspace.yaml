@@ -1,0 +1,4 @@
+# sharp (Next.js-Bildoptimierung) darf sein natives Binary bauen — pnpm 11
+# blockiert Build-Skripte sonst und bricht die Installation ab.
+allowBuilds:
+  sharp: true

@@ -224,6 +224,23 @@ PostgreSQL-Datenbank mit 138+ Manga-Einträgen
 - PostgreSQL 14+
 - pnpm (empfohlen für Frontend)
 
+### Entwicklung mit `make`
+
+```bash
+make install   # Abhängigkeiten für API und Frontend
+make dev       # API :4000 + Frontend :3000 gegen die Dev-Datenbank
+make help      # alle Ziele: db-psql, db-backup, image-test, deploy, prod-logs, …
+```
+
+Dev nutzt die Datenbank `manga_inventory` im gemeinsamen `central_postgres`
+(Zugangsdaten aus `api/.env`). Das Frontend spricht mit der lokalen API statt
+mit der Produktion — `api/.env` und `frontend/.env.local` werden dabei zur
+Laufzeit überschrieben, nicht verändert. Vor Migrationen: `make db-backup`.
+
+**Deploy:** Jeder Push auf `main` mit Änderungen unter `api/` baut das Image und
+spielt es auf dem DMZ-Host ein (`.github/workflows/api-image.yml`). Manuell:
+`make deploy`. Einmalige Einrichtung des Zugangs: `scripts/deploy/setup-dmz.sh`.
+
 ### Schnellstart
 
 1. **Repository klonen:**
