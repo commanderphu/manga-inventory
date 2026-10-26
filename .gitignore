@@ -14,6 +14,13 @@ frontend/out/
 frontend/.vercel
 
 # ========================
+# Design-Rohmaterial
+# ========================
+# Arbeitskopie des Design-Sets (Original im Vault). Eingebaut wird jede Datei
+# dort, wo sie gebraucht wird (app/assets/, docs/, frontend/public/) — siehe #16.
+/assets/
+
+# ========================
 # Build outputs
 # ========================
 build/
