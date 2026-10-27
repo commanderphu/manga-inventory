@@ -9,7 +9,7 @@ export const metadata: Metadata = {
   icons: {
     icon: "/favicon.png",
     shortcut: "/favicon.png",
-    apple: "/favicon.png",
+    apple: "/apple-icon.png",
   },
 }
 
@@ -20,9 +20,6 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <head>
-        <link rel="icon" href="/favicon.png" type="image/svg+xml" />
-      </head>
       <body>{children}</body>
     </html>
   )
