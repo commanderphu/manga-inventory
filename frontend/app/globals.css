@@ -11,18 +11,18 @@
 @layer base {
   /* Brand-Farben aus docs/BRAND_SETUP.md — nur ein dunkles Theme */
   :root {
-    --background: 218 60% 8%;
-    --foreground: 36 33% 94%;
+    --background: 218 60% 8%;          /* Deep Navy */
+    --foreground: 36 33% 94%;          /* Warm White */
     --card: 223 37% 11%;               /* Graphite */
-    --card-foreground: 36 33% 94
+    --card-foreground: 36 33% 94%;
     --popover: 223 37% 11%;
-    --popover-foreground: 36 33%
-    --primary: 191 100% 56%;
-    --primary-foreground: 218 60
+    --popover-foreground: 36 33% 94%;
+    --primary: 191 100% 56%;           /* Neon Cyan */
+    --primary-foreground: 218 60% 8%;
     --secondary: 222 34% 15%;
-    --secondary-foreground: 36 3
+    --secondary-foreground: 36 33% 94%;
     --muted: 222 34% 15%;
-    --muted-foreground: 221 14%
+    --muted-foreground: 221 14% 60%;
     --accent: 222 34% 15%;             /* Hover-Flächen — bewusst nicht Violet */
     --accent-foreground: 36 33% 94%;
     --destructive: 354 100% 65%;
@@ -32,7 +32,7 @@
     --ring: 191 100% 56%;
     --radius: 0.75rem;
 
-    /* Brand-Akzente für gezieltts) */
+    /* Brand-Akzente für gezielten Einsatz (Status, Highlights) */
     --brand-cyan: 191 100% 56%;
     --brand-violet: 271 91% 65%;
     --brand-coral: 354 100% 71%;
@@ -43,14 +43,14 @@
     --chart-4: 36 33% 94%;
     --chart-5: 221 14% 60%;
 
-    --sidebar-background: 223 37
+    --sidebar-background: 223 37% 11%;
     --sidebar-foreground: 36 33% 94%;
-    --sidebar-primary: 191 100%
+    --sidebar-primary: 191 100% 56%;
     --sidebar-primary-foreground: 218 60% 8%;
-    --sidebar-accent: 222 34% 15
+    --sidebar-accent: 222 34% 15%;
     --sidebar-accent-foreground: 36 33% 94%;
-    --sidebar-border: 222 26% 22
-    --sidebar-ring: 191 100% 56%
+    --sidebar-border: 222 26% 22%;
+    --sidebar-ring: 191 100% 56%;
   }
 }
 
