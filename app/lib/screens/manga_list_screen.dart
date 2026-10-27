@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../models/manga.dart';
@@ -10,6 +12,8 @@ import '../widgets/empty_state.dart';
 import 'manga_add_screen.dart';
 import '../theme/app_theme.dart';
 
+const searchDebounceDelay = Duration(milliseconds: 300);
+
 class MangaListScreen extends ConsumerStatefulWidget {
   const MangaListScreen({super.key});
 
@@ -20,14 +24,19 @@ class MangaListScreen extends ConsumerStatefulWidget {
 class _MangaListScreenState extends ConsumerState<MangaListScreen> {
   bool _isSearching = false;
   final _searchController = TextEditingController();
+  // Erst nach einer Tipp-Pause suchen — sonst geht jeder Buchstabe als
+  // eigene Anfrage an die API.
+  Timer? _searchDebounce;
 
   @override
   void dispose() {
+    _searchDebounce?.cancel();
     _searchController.dispose();
     super.dispose();
   }
 
   void _clearAllFilters() {
+    _searchDebounce?.cancel();
     ref.read(searchQueryProvider.notifier).state = '';
     ref.read(genreFilterProvider.notifier).state = null;
     ref.read(autorFilterProvider.notifier).state = null;
@@ -86,7 +95,10 @@ class _MangaListScreenState extends ConsumerState<MangaListScreen> {
                   border: InputBorder.none,
                 ),
                 onChanged: (value) {
-                  ref.read(searchQueryProvider.notifier).state = value;
+                  _searchDebounce?.cancel();
+                  _searchDebounce = Timer(searchDebounceDelay, () {
+                    ref.read(searchQueryProvider.notifier).state = value;
+                  });
                 },
               )
             : const Text('📚 Manga Sammlung'),
@@ -97,6 +109,7 @@ class _MangaListScreenState extends ConsumerState<MangaListScreen> {
               onPressed: () {
                 setState(() {
                   _isSearching = false;
+                  _searchDebounce?.cancel();
                   _searchController.clear();
                   ref.read(searchQueryProvider.notifier).state = '';
                 });
@@ -361,6 +374,7 @@ class _FilterTextField extends ConsumerStatefulWidget {
 
 class _FilterTextFieldState extends ConsumerState<_FilterTextField> {
   late final TextEditingController _controller;
+  Timer? _debounce;
 
   @override
   void initState() {
@@ -372,6 +386,7 @@ class _FilterTextFieldState extends ConsumerState<_FilterTextField> {
 
   @override
   void dispose() {
+    _debounce?.cancel();
     _controller.dispose();
     super.dispose();
   }
@@ -388,6 +403,7 @@ class _FilterTextFieldState extends ConsumerState<_FilterTextField> {
             ? IconButton(
                 icon: const Icon(Icons.clear),
                 onPressed: () {
+                  _debounce?.cancel();
                   _controller.clear();
                   ref.read(widget.provider.notifier).state = null;
                 },
@@ -395,7 +411,11 @@ class _FilterTextFieldState extends ConsumerState<_FilterTextField> {
             : null,
       ),
       onChanged: (value) {
-        ref.read(widget.provider.notifier).state = value.isEmpty ? null : value;
+        _debounce?.cancel();
+        _debounce = Timer(searchDebounceDelay, () {
+          ref.read(widget.provider.notifier).state =
+              value.isEmpty ? null : value;
+        });
       },
     );
   }
