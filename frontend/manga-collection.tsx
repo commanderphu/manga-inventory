@@ -1341,9 +1341,9 @@ function MangaCollectionContent() {
         </div>
 
         {/* Manga Table */}
-        <Card className="shadow-xl border-purple-200">
-          <CardHeader className="bg-gradient-to-r from-purple-50 to-pink-50">
-            <CardTitle className="flex items-center justify-between text-purple-700">
+        <Card className="shadow-xl">
+          <CardHeader className="border-b">
+            <CardTitle className="flex items-center justify-between text-foreground">
               <span className="flex items-center gap-2">
                 <BookOpen className="h-5 w-5" />
                 Manga-Sammlung ({mangas.length})
@@ -1361,7 +1361,7 @@ function MangaCollectionContent() {
             </CardTitle>
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="ghost" size="sm" className="hover:bg-purple-100" disabled={loading}>
+                <Button variant="ghost" size="sm" className="hover:bg-accent" disabled={loading}>
                   Sortieren
                   {sortConfig.key ? ` (${getSortIndicator(sortConfig.key)})` : ""}
                   <MoreHorizontal className="h-4 w-4" />
@@ -1396,24 +1396,24 @@ function MangaCollectionContent() {
               ) : (
                 <Table>
                   <TableHeader>
-                    <TableRow className="bg-purple-50">
+                    <TableRow className="bg-secondary hover:bg-secondary">
                       <TableHead className="w-12">
                         <span className="sr-only">Auswahl</span>
                       </TableHead>
                       <TableHead>Cover</TableHead>
-                      <TableHead className="font-semibold text-purple-700">Titel</TableHead>
-                      <TableHead className="font-semibold text-purple-700">Band</TableHead>
-                      <TableHead className="font-semibold text-purple-700">Genre</TableHead>
-                      <TableHead className="font-semibold text-purple-700">Autor</TableHead>
-                      <TableHead className="font-semibold text-purple-700">Verlag</TableHead>
-                      <TableHead className="font-semibold text-purple-700">ISBN</TableHead>
-                      <TableHead className="font-semibold text-purple-700">Sprache</TableHead>
-                      <TableHead className="font-semibold text-purple-700">Status</TableHead>
+                      <TableHead className="font-semibold text-muted-foreground">Titel</TableHead>
+                      <TableHead className="font-semibold text-muted-foreground">Band</TableHead>
+                      <TableHead className="font-semibold text-muted-foreground">Genre</TableHead>
+                      <TableHead className="font-semibold text-muted-foreground">Autor</TableHead>
+                      <TableHead className="font-semibold text-muted-foreground">Verlag</TableHead>
+                      <TableHead className="font-semibold text-muted-foreground">ISBN</TableHead>
+                      <TableHead className="font-semibold text-muted-foreground">Sprache</TableHead>
+                      <TableHead className="font-semibold text-muted-foreground">Status</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
                     {mangas.map((manga, index) => (
-                      <TableRow key={manga.id} className={index % 2 === 0 ? "bg-white" : "bg-purple-25"}>
+                      <TableRow key={manga.id} className={index % 2 === 0 ? "bg-card" : "bg-secondary/40"}>
                         <TableCell>
                           <Checkbox
                             checked={selectedMangas.includes(manga.id)}
@@ -1422,7 +1422,7 @@ function MangaCollectionContent() {
                           />
                         </TableCell>
                         <TableCell>
-                          <div className="w-12 h-16 bg-gradient-to-br from-purple-100 to-pink-100 rounded-lg flex items-center justify-center overflow-hidden shadow-sm">
+                          <div className="w-12 h-16 bg-secondary rounded-lg flex items-center justify-center overflow-hidden shadow-sm">
                             {manga.coverImage ? (
                               <img
                                 src={manga.coverImage}
@@ -1435,10 +1435,10 @@ function MangaCollectionContent() {
                                 }}
                               />
                             ) : null}
-                            <BookOpen hidden={!!manga.coverImage} className="h-6 w-6 text-purple-400" />
+                            <BookOpen hidden={!!manga.coverImage} className="h-6 w-6 text-muted-foreground" />
                           </div>
                         </TableCell>
-                        <TableCell className="font-medium text-purple-900">
+                        <TableCell className="font-medium text-foreground">
                           <Link
                             href={`/manga?${new URLSearchParams({ ...Object.fromEntries(searchParams.entries()), id: manga.id }).toString()}`}
                             className="hover:underline"
@@ -1450,7 +1450,7 @@ function MangaCollectionContent() {
                           {manga.band ? (
                             <Badge
                               variant="outline"
-                              className="bg-purple-50 border-purple-300 text-purple-700 font-medium px-2.5 py-1"
+                              className="bg-secondary border-border text-foreground font-medium px-2.5 py-1"
                             >
                               Band {manga.band}
                             </Badge>
@@ -1465,7 +1465,7 @@ function MangaCollectionContent() {
                                 <Badge
                                   key={i}
                                   variant="secondary"
-                                  className="text-xs bg-gradient-to-r from-pink-100 to-purple-100 text-pink-700 shadow-sm"
+                                  className="text-xs bg-brand-violet/15 text-brand-violet border-0"
                                 >
                                   {g.trim()}
                                 </Badge>
@@ -1483,7 +1483,7 @@ function MangaCollectionContent() {
                         </TableCell>
                         <TableCell className="font-mono text-sm">{manga.isbn}</TableCell>
                         <TableCell>
-                          <Badge variant="outline" className="border-blue-200 text-blue-700">
+                          <Badge variant="outline" className="border-border text-muted-foreground">
                             {manga.sprache}
                           </Badge>
                         </TableCell>
@@ -1492,13 +1492,13 @@ function MangaCollectionContent() {
                             <div className="flex items-center gap-1.5">
                               {manga.read ? (
                                 <div className="flex items-center gap-1.5">
-                                  <div className="w-3 h-3 rounded-full bg-green-500"></div>
-                                  <span className="text-sm text-green-700 font-medium">Gelesen</span>
+                                  <div className="w-3 h-3 rounded-full bg-brand-cyan"></div>
+                                  <span className="text-sm text-brand-cyan font-medium">Gelesen</span>
                                 </div>
                               ) : (
                                 <div className="flex items-center gap-1.5">
-                                  <div className="w-3 h-3 rounded-full bg-gray-300"></div>
-                                  <span className="text-sm text-gray-500">Ungelesen</span>
+                                  <div className="w-3 h-3 rounded-full bg-border"></div>
+                                  <span className="text-sm text-muted-foreground">Ungelesen</span>
                                 </div>
                               )}
                             </div>
@@ -1506,13 +1506,13 @@ function MangaCollectionContent() {
                             <div className="flex items-center gap-1.5">
                               {manga.double ? (
                                 <div className="flex items-center gap-1.5">
-                                  <div className="w-3 h-3 rounded-full bg-orange-500"></div>
-                                  <span className="text-sm text-orange-700 font-medium">Doppelt</span>
+                                  <div className="w-3 h-3 rounded-full bg-brand-coral"></div>
+                                  <span className="text-sm text-brand-coral font-medium">Doppelt</span>
                                 </div>
                               ) : (
                                 <div className="flex items-center gap-1.5">
-                                  <div className="w-3 h-3 rounded-full bg-gray-300"></div>
-                                  <span className="text-sm text-gray-500">Einzeln</span>
+                                  <div className="w-3 h-3 rounded-full bg-border"></div>
+                                  <span className="text-sm text-muted-foreground">Einzeln</span>
                                 </div>
                               )}
                             </div>
@@ -1520,13 +1520,13 @@ function MangaCollectionContent() {
                             <div className="flex items-center gap-1.5">
                               {manga.newbuy ? (
                                 <div className="flex items-center gap-1.5">
-                                  <div className="w-3 h-3 rounded-full bg-purple-500"></div>
-                                  <span className="text-sm text-purple-700 font-medium">Kaufen</span>
+                                  <div className="w-3 h-3 rounded-full bg-brand-violet"></div>
+                                  <span className="text-sm text-brand-violet font-medium">Kaufen</span>
                                 </div>
                               ) : (
                                 <div className="flex items-center gap-1.5">
-                                  <div className="w-3 h-3 rounded-full bg-gray-300"></div>
-                                  <span className="text-sm text-gray-500">Neu kaufen</span>
+                                  <div className="w-3 h-3 rounded-full bg-border"></div>
+                                  <span className="text-sm text-muted-foreground">Neu kaufen</span>
                                 </div>
                               )}
                             </div>
@@ -1541,7 +1541,7 @@ function MangaCollectionContent() {
 
             {!loading && mangas.length === 0 && (
               <div className="text-center py-12 text-muted-foreground">
-                <BookOpen className="h-12 w-12 mx-auto mb-4 text-purple-300" />
+                <BookOpen className="h-12 w-12 mx-auto mb-4 text-muted-foreground" />
                 <p className="text-lg">Keine Manga gefunden 📚</p>
                 {searchTerm || activeFiltersCount > 0 ? (
                   <p className="text-sm">Versuche andere Filter oder Suchbegriffe.</p>
