@@ -8,6 +8,8 @@ import 'screens/login_screen.dart';
 import 'screens/register_screen.dart';
 import 'screens/settings_screen.dart';
 import 'providers/auth_provider.dart';
+import 'providers/onboarding_provider.dart';
+import 'screens/welcome_screen.dart';
 import 'services/sync_service.dart';
 
 void main() async {
@@ -66,9 +68,16 @@ class AuthWrapper extends ConsumerWidget {
       data: (isLoggedIn) {
         if (isLoggedIn) {
           return const MangaListScreen();
-        } else {
-          return const LoginScreen();
         }
+        // Wer noch nie hier war, sieht vor dem Login einmal den Willkommens-Screen
+        return ref.watch(onboardingSeenProvider).when(
+              data: (seen) =>
+                  seen ? const LoginScreen() : const WelcomeScreen(),
+              loading: () => const Scaffold(
+                body: Center(child: CircularProgressIndicator()),
+              ),
+              error: (_, __) => const LoginScreen(),
+            );
       },
       loading: () => const Scaffold(
         body: Center(

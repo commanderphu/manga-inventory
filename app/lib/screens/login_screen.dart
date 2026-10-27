@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../providers/auth_provider.dart';
 import '../theme/app_theme.dart';
+import '../widgets/brand_title.dart';
 
 class LoginScreen extends ConsumerStatefulWidget {
   const LoginScreen({super.key});
@@ -76,19 +77,9 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  Icon(
-                    Icons.book,
-                    size: 80,
-                    color: Theme.of(context).colorScheme.primary,
-                  ),
+                  Image.asset('assets/onboard.webp', height: 160),
                   const SizedBox(height: 16),
-                  Text(
-                    'Manga Sammlung',
-                    style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                          fontWeight: FontWeight.bold,
-                        ),
-                    textAlign: TextAlign.center,
-                  ),
+                  const BrandTitle(),
                   const SizedBox(height: 8),
                   Text(
                     'Melde dich an',
