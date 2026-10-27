@@ -6,6 +6,7 @@ import '../widgets/manga_list_tile.dart';
 import '../widgets/stat_card.dart';
 import '../widgets/pagination_widget.dart';
 import '../widgets/offline_banner.dart';
+import '../widgets/empty_state.dart';
 import 'manga_add_screen.dart';
 import '../theme/app_theme.dart';
 
@@ -37,6 +38,28 @@ class _MangaListScreenState extends ConsumerState<MangaListScreen> {
     ref.read(newbuyFilterProvider.notifier).state = null;
     ref.read(currentPageProvider.notifier).state = 1;
     _searchController.clear();
+  }
+
+  bool get _filtersActive =>
+      ref.read(searchQueryProvider).isNotEmpty ||
+      ref.read(genreFilterProvider) != null ||
+      ref.read(autorFilterProvider) != null ||
+      ref.read(verlagFilterProvider) != null ||
+      ref.read(spracheFilterProvider) != null ||
+      ref.read(readFilterProvider) != null ||
+      ref.read(doubleFilterProvider) != null ||
+      ref.read(newbuyFilterProvider) != null;
+
+  Future<void> _openAddScreen() async {
+    final result = await Navigator.push<bool>(
+      context,
+      MaterialPageRoute(builder: (context) => const MangaAddScreen()),
+    );
+    if (result == true) {
+      // Refresh list after adding
+      ref.invalidate(mangaListProvider);
+      ref.invalidate(statsProvider);
+    }
   }
 
   @override
@@ -131,9 +154,13 @@ class _MangaListScreenState extends ConsumerState<MangaListScreen> {
                   mangaListAsync.when(
                     data: (response) {
                       if (response.data.isEmpty) {
-                        return const SliverFillRemaining(
-                          child: Center(
-                            child: Text('Keine Manga gefunden'),
+                        final filtered = _filtersActive;
+                        return SliverFillRemaining(
+                          hasScrollBody: false,
+                          child: EmptyState(
+                            filtered: filtered,
+                            onAction:
+                                filtered ? _clearAllFilters : _openAddScreen,
                           ),
                         );
                       }
@@ -188,17 +215,7 @@ class _MangaListScreenState extends ConsumerState<MangaListScreen> {
         ],
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () async {
-          final result = await Navigator.push<bool>(
-            context,
-            MaterialPageRoute(builder: (context) => const MangaAddScreen()),
-          );
-          if (result == true) {
-            // Refresh list after adding
-            ref.invalidate(mangaListProvider);
-            ref.invalidate(statsProvider);
-          }
-        },
+        onPressed: _openAddScreen,
         child: const Icon(Icons.add),
       ),
     );
