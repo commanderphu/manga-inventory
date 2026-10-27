@@ -202,7 +202,7 @@ export function ISBNScanner({ onScan, onClose }: ISBNScannerProps) {
         {scanning && (
           <div className="absolute inset-0 flex items-center justify-center">
             <div className="relative">
-              <div className="w-64 h-32 border-2 border-green-500 rounded-lg animate-pulse bg-green-500/10"></div>
+              <div className="w-64 h-32 border-2 border-brand-cyan rounded-lg animate-pulse bg-brand-cyan/10"></div>
               <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-white text-sm font-medium bg-black/50 px-2 py-1 rounded">
                 ISBN scannen...
               </div>
@@ -233,14 +233,14 @@ export function ISBNScanner({ onScan, onClose }: ISBNScannerProps) {
         )}
 
         {permission === true && !scanning && (
-          <Button onClick={startScanning} className="bg-green-600 hover:bg-green-700">
+          <Button onClick={startScanning} className="bg-primary text-primary-foreground hover:bg-primary/90">
             <Camera className="h-4 w-4 mr-2" />
             Scanning starten
           </Button>
         )}
 
         {scanning && (
-          <Button onClick={stopScanning} variant="secondary" className="bg-amber-600 hover:bg-amber-700 text-white">
+          <Button onClick={stopScanning} variant="secondary">
             <Loader2 className="h-4 w-4 mr-2 animate-spin" />
             Scanning...
           </Button>

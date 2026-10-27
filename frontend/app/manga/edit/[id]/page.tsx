@@ -160,7 +160,7 @@ export default function EditMangaPage({ params }: { params: { id: string } }) {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-pink-50 via-purple-50 to-indigo-50">
+      <div className="min-h-screen bg-background">
         <div className="container mx-auto p-6 space-y-6">
           <Skeleton className="h-10 w-32" />
           <div className="grid grid-cols-1 gap-6">
@@ -173,14 +173,14 @@ export default function EditMangaPage({ params }: { params: { id: string } }) {
 
   if (error || !manga) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-pink-50 via-purple-50 to-indigo-50">
+      <div className="min-h-screen bg-background">
         <div className="container mx-auto p-6 space-y-6">
           <Button variant="outline" className="mb-4" onClick={() => router.back()}>
             <ArrowLeft className="h-4 w-4 mr-2" />
             Zurück
           </Button>
-          <Alert className="border-red-400 bg-red-50">
-            <AlertDescription className="font-medium text-red-700">{error || "Manga nicht gefunden"}</AlertDescription>
+          <Alert className="border-destructive bg-destructive/10">
+            <AlertDescription className="font-medium text-destructive">{error || "Manga nicht gefunden"}</AlertDescription>
           </Alert>
         </div>
       </div>
@@ -188,40 +188,40 @@ export default function EditMangaPage({ params }: { params: { id: string } }) {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-pink-50 via-purple-50 to-indigo-50">
+    <div className="min-h-screen bg-background">
       <div className="container mx-auto p-4 md:p-6 space-y-4 md:space-y-6">
         {/* Header */}
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
           <Button
             variant="outline"
-            className="border-purple-200 hover:bg-purple-50 w-full sm:w-auto"
+            className="border-border hover:bg-accent w-full sm:w-auto"
             onClick={() => router.push(`/manga?id=${mangaId}`)}
           >
             <ArrowLeft className="h-4 w-4 mr-2" />
             Zurück zur Detailansicht
           </Button>
           <div className="flex items-center gap-2 mx-auto sm:mx-0">
-            <Sparkles className="h-5 w-5 md:h-6 md:w-6 text-pink-500" />
-            <h1 className="text-xl md:text-2xl font-bold bg-gradient-to-r from-pink-500 via-purple-500 to-indigo-500 bg-clip-text text-transparent">
+            <Sparkles className="h-5 w-5 md:h-6 md:w-6 text-brand-coral" />
+            <h1 className="text-xl md:text-2xl font-bold text-foreground">
               Manga Bearbeiten
             </h1>
-            <Heart className="h-5 w-5 md:h-6 md:w-6 text-purple-500" />
+            <Heart className="h-5 w-5 md:h-6 md:w-6 text-brand-violet" />
           </div>
         </div>
 
         {/* Status Alert */}
         {status.type && (
           <Alert
-            className={`${status.type === "success" ? "border-green-400 bg-green-50" : "border-red-400 bg-red-50"} shadow-lg`}
+            className={`${status.type === "success" ? "border-brand-cyan bg-brand-cyan/10" : "border-destructive bg-destructive/10"} shadow-lg`}
           >
             <AlertDescription className="font-medium text-sm md:text-base">{status.message}</AlertDescription>
           </Alert>
         )}
 
         {/* Edit Form */}
-        <Card className="shadow-xl border-purple-200">
-          <CardHeader className="bg-gradient-to-r from-purple-50 to-pink-50 p-4 md:p-6">
-            <CardTitle className="text-purple-700 text-lg md:text-xl">Manga bearbeiten ✏️</CardTitle>
+        <Card className="shadow-xl border-border">
+          <CardHeader className="border-b p-4 md:p-6">
+            <CardTitle className="text-foreground text-lg md:text-xl">Manga bearbeiten ✏️</CardTitle>
           </CardHeader>
           <CardContent className="p-4 md:p-6">
             <div className="space-y-6">
@@ -235,7 +235,7 @@ export default function EditMangaPage({ params }: { params: { id: string } }) {
                       value={manga.titel}
                       onChange={(e) => setManga({ ...manga, titel: e.target.value })}
                       placeholder="Manga-Titel"
-                      className="border-purple-200 focus:border-purple-400"
+                      className="focus:border-primary"
                       disabled={saving}
                     />
                   </div>
@@ -248,7 +248,7 @@ export default function EditMangaPage({ params }: { params: { id: string } }) {
                         value={manga.band}
                         onChange={(e) => setManga({ ...manga, band: e.target.value })}
                         placeholder="Band-Nr."
-                        className="border-purple-200 focus:border-purple-400"
+                        className="focus:border-primary"
                         disabled={saving}
                       />
                     </div>
@@ -260,7 +260,7 @@ export default function EditMangaPage({ params }: { params: { id: string } }) {
                         value={manga.sprache}
                         onChange={(e) => setManga({ ...manga, sprache: e.target.value })}
                         placeholder="Deutsch"
-                        className="border-purple-200 focus:border-purple-400"
+                        className="focus:border-primary"
                         disabled={saving}
                       />
                     </div>
@@ -273,7 +273,7 @@ export default function EditMangaPage({ params }: { params: { id: string } }) {
                       value={manga.genre}
                       onChange={(e) => setManga({ ...manga, genre: e.target.value })}
                       placeholder="z.B. Shonen, Action"
-                      className="border-purple-200 focus:border-purple-400"
+                      className="focus:border-primary"
                       disabled={saving}
                     />
                   </div>
@@ -285,7 +285,7 @@ export default function EditMangaPage({ params }: { params: { id: string } }) {
                       value={manga.autor}
                       onChange={(e) => setManga({ ...manga, autor: e.target.value })}
                       placeholder="Autor-Name"
-                      className="border-purple-200 focus:border-purple-400"
+                      className="focus:border-primary"
                       disabled={saving}
                     />
                   </div>
@@ -297,7 +297,7 @@ export default function EditMangaPage({ params }: { params: { id: string } }) {
                       value={manga.verlag}
                       onChange={(e) => setManga({ ...manga, verlag: e.target.value })}
                       placeholder="Verlag"
-                      className="border-purple-200 focus:border-purple-400"
+                      className="focus:border-primary"
                       disabled={saving}
                     />
                   </div>
@@ -314,7 +314,7 @@ export default function EditMangaPage({ params }: { params: { id: string } }) {
                           value={manga.isbn}
                           onChange={(e) => setManga({ ...manga, isbn: e.target.value })}
                           placeholder="ISBN-Nummer"
-                          className="border-purple-200 focus:border-purple-400"
+                          className="focus:border-primary"
                           disabled={saving || isLoadingISBN}
                         />
                       </div>
@@ -356,7 +356,7 @@ export default function EditMangaPage({ params }: { params: { id: string } }) {
                       value={manga.coverImage}
                       onChange={(e) => setManga({ ...manga, coverImage: e.target.value })}
                       placeholder="URL zum Cover-Bild"
-                      className="border-purple-200 focus:border-purple-400"
+                      className="focus:border-primary"
                       disabled={saving}
                     />
                     {manga.coverImage && manga.coverImage !== "/placeholder.svg?height=120&width=80" && (
@@ -364,7 +364,7 @@ export default function EditMangaPage({ params }: { params: { id: string } }) {
                         <img
                           src={manga.coverImage || "/placeholder.svg"}
                           alt="Cover Vorschau"
-                          className="h-40 object-contain rounded-md border border-purple-200"
+                          className="h-40 object-contain rounded-md border border-border"
                           onError={(e) => {
                             const target = e.target as HTMLImageElement
                             target.src = "/placeholder.svg?height=120&width=80"
@@ -411,7 +411,7 @@ export default function EditMangaPage({ params }: { params: { id: string } }) {
               <div className="flex flex-col sm:flex-row gap-4 pt-4">
                 <Button
                   onClick={handleUpdateManga}
-                  className="flex-1 bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700"
+                  className="flex-1 bg-brand-coral text-background hover:bg-brand-coral/90"
                   disabled={saving}
                 >
                   {saving ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : null}
@@ -434,7 +434,7 @@ export default function EditMangaPage({ params }: { params: { id: string } }) {
         <Dialog open={isScannerOpen} onOpenChange={setIsScannerOpen}>
           <DialogContent className="mx-4 max-w-md max-h-[90vh] overflow-y-auto">
             <DialogHeader>
-              <DialogTitle className="text-purple-700 text-lg">ISBN scannen 📷</DialogTitle>
+              <DialogTitle className="text-foreground text-lg">ISBN scannen 📷</DialogTitle>
             </DialogHeader>
             <SimpleISBNScanner onScan={handleISBNScan} onClose={() => setIsScannerOpen(false)} />
           </DialogContent>

@@ -180,7 +180,7 @@ function MangaDetailContent() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-pink-50 via-purple-50 to-indigo-50">
+      <div className="min-h-screen bg-background">
         <div className="container mx-auto p-6 space-y-6">
           <Skeleton className="h-10 w-32" />
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -198,7 +198,7 @@ function MangaDetailContent() {
 
   if (error || !manga) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-pink-50 via-purple-50 to-indigo-50">
+      <div className="min-h-screen bg-background">
         <div className="container mx-auto p-6 space-y-6">
           <Button
             variant="outline"
@@ -213,8 +213,8 @@ function MangaDetailContent() {
             <ArrowLeft className="h-4 w-4 mr-2" />
             Zurück zur Sammlung
           </Button>
-          <Alert className="border-red-400 bg-red-50">
-            <AlertDescription className="font-medium text-red-700">{error || "Manga nicht gefunden"}</AlertDescription>
+          <Alert className="border-destructive bg-destructive/10">
+            <AlertDescription className="font-medium text-destructive">{error || "Manga nicht gefunden"}</AlertDescription>
           </Alert>
         </div>
       </div>
@@ -222,13 +222,13 @@ function MangaDetailContent() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-pink-50 via-purple-50 to-indigo-50">
+    <div className="min-h-screen bg-background">
       <div className="container mx-auto p-4 md:p-6 space-y-4 md:space-y-6">
         {/* Header */}
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
           <Button
             variant="outline"
-            className="border-purple-200 hover:bg-purple-50 w-full sm:w-auto"
+            className="border-border hover:bg-accent w-full sm:w-auto"
             onClick={() => {
               // Erstelle neue URLSearchParams basierend auf den aktuellen searchParams
               const params = new URLSearchParams(searchParams.toString())
@@ -243,18 +243,18 @@ function MangaDetailContent() {
             Zurück zur Sammlung
           </Button>
           <div className="flex items-center gap-2 mx-auto sm:mx-0">
-            <Sparkles className="h-5 w-5 md:h-6 md:w-6 text-pink-500" />
-            <h1 className="text-xl md:text-2xl font-bold bg-gradient-to-r from-pink-500 via-purple-500 to-indigo-500 bg-clip-text text-transparent">
+            <Sparkles className="h-5 w-5 md:h-6 md:w-6 text-brand-coral" />
+            <h1 className="text-xl md:text-2xl font-bold text-foreground">
               Manga Details
             </h1>
-            <Heart className="h-5 w-5 md:h-6 md:w-6 text-purple-500" />
+            <Heart className="h-5 w-5 md:h-6 md:w-6 text-brand-violet" />
           </div>
         </div>
 
         {/* Status Alert */}
         {status.type && (
           <Alert
-            className={`${status.type === "success" ? "border-green-400 bg-green-50" : "border-red-400 bg-red-50"} shadow-lg`}
+            className={`${status.type === "success" ? "border-brand-cyan bg-brand-cyan/10" : "border-destructive bg-destructive/10"} shadow-lg`}
           >
             <AlertDescription className="font-medium text-sm md:text-base">{status.message}</AlertDescription>
           </Alert>
@@ -263,9 +263,9 @@ function MangaDetailContent() {
         {/* Main Content */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 md:gap-6">
           {/* Cover Image */}
-          <Card className="shadow-xl border-purple-200 order-1 lg:order-1">
+          <Card className="shadow-xl border-border order-1 lg:order-1">
             <CardContent className="p-4 md:p-6">
-              <div className="aspect-[3/4] max-w-sm mx-auto lg:max-w-none bg-gradient-to-br from-purple-100 to-pink-100 rounded-lg flex items-center justify-center overflow-hidden shadow-lg">
+              <div className="aspect-[3/4] max-w-sm mx-auto lg:max-w-none bg-secondary rounded-lg flex items-center justify-center overflow-hidden shadow-lg">
                 {manga.coverImage && manga.coverImage !== "/placeholder.svg?height=120&width=80" ? (
                   <img
                     src={manga.coverImage || "/placeholder.svg"}
@@ -278,7 +278,7 @@ function MangaDetailContent() {
                     }}
                   />
                 ) : null}
-                <div className="text-center text-purple-400">
+                <div className="text-center text-muted-foreground">
                   <BookOpen className="h-12 w-12 md:h-16 md:w-16 mx-auto mb-2" />
                   <p className="text-xs md:text-sm">Kein Cover verfügbar</p>
                 </div>
@@ -289,14 +289,14 @@ function MangaDetailContent() {
           {/* Details */}
           <div className="lg:col-span-2 space-y-4 md:space-y-6 order-2 lg:order-2">
             {/* Title and Actions */}
-            <Card className="shadow-xl border-purple-200">
-              <CardHeader className="bg-gradient-to-r from-purple-50 to-pink-50 p-4 md:p-6">
+            <Card className="shadow-xl border-border">
+              <CardHeader className="border-b p-4 md:p-6">
                 <div className="flex flex-col space-y-4 md:space-y-0 md:flex-row md:items-center md:justify-between">
-                  <CardTitle className="text-xl md:text-2xl text-purple-900 break-words">{manga.titel}</CardTitle>
+                  <CardTitle className="text-xl md:text-2xl text-foreground break-words">{manga.titel}</CardTitle>
                   <div className="flex flex-col sm:flex-row gap-2 w-full md:w-auto">
                     <Button
                       onClick={() => router.push(`/manga/edit/${mangaId}`)}
-                      className="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 w-full sm:w-auto"
+                      className="bg-primary text-primary-foreground hover:bg-primary/90 w-full sm:w-auto"
                       size="sm"
                     >
                       <Edit className="h-4 w-4 mr-2" />
@@ -306,7 +306,7 @@ function MangaDetailContent() {
                       <AlertDialogTrigger asChild>
                         <Button
                           variant="destructive"
-                          className="bg-red-500 hover:bg-red-600 w-full sm:w-auto"
+                          className="bg-destructive text-destructive-foreground hover:bg-destructive/90 w-full sm:w-auto"
                           size="sm"
                         >
                           <Trash2 className="h-4 w-4 mr-2" />
@@ -325,7 +325,7 @@ function MangaDetailContent() {
                           <AlertDialogCancel className="w-full sm:w-auto">Abbrechen</AlertDialogCancel>
                           <AlertDialogAction
                             onClick={handleDeleteManga}
-                            className="bg-red-500 hover:bg-red-600 w-full sm:w-auto"
+                            className="bg-destructive text-destructive-foreground hover:bg-destructive/90 w-full sm:w-auto"
                           >
                             Löschen
                           </AlertDialogAction>
@@ -338,44 +338,44 @@ function MangaDetailContent() {
               <CardContent className="p-4 md:p-6 space-y-4">
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
-                    <Label className="text-sm font-medium text-purple-700">Band</Label>
+                    <Label className="text-sm font-medium text-muted-foreground">Band</Label>
                     <div className="mt-1">
-                      <Badge variant="outline" className="border-purple-200 text-purple-700">
+                      <Badge variant="outline" className="border-border text-foreground">
                         Band {manga.band}
                       </Badge>
                     </div>
                   </div>
                   <div>
-                    <Label className="text-sm font-medium text-purple-700">Sprache</Label>
+                    <Label className="text-sm font-medium text-muted-foreground">Sprache</Label>
                     <div className="mt-1">
-                      <Badge variant="outline" className="border-blue-200 text-blue-700">
+                      <Badge variant="outline" className="border-border text-muted-foreground">
                         {manga.sprache}
                       </Badge>
                     </div>
                   </div>
                   <div>
-                    <Label className="text-sm font-medium text-purple-700">Autor</Label>
+                    <Label className="text-sm font-medium text-muted-foreground">Autor</Label>
                     <p className="text-sm mt-1 break-words">
                       {manga.autor || <span className="text-muted-foreground italic">Nicht angegeben</span>}
                     </p>
                   </div>
                   <div>
-                    <Label className="text-sm font-medium text-purple-700">Verlag</Label>
+                    <Label className="text-sm font-medium text-muted-foreground">Verlag</Label>
                     <p className="text-sm mt-1 break-words">
                       {manga.verlag || <span className="text-muted-foreground italic">Nicht angegeben</span>}
                     </p>
                   </div>
                   <div className="sm:col-span-2">
-                    <Label className="text-sm font-medium text-purple-700">ISBN</Label>
+                    <Label className="text-sm font-medium text-muted-foreground">ISBN</Label>
                     <p className="text-sm font-mono mt-1 break-all">{manga.isbn}</p>
                   </div>
                 </div>
 
                 <div>
-                  <Label className="text-sm font-medium text-purple-700">Genre</Label>
+                  <Label className="text-sm font-medium text-muted-foreground">Genre</Label>
                   <div className="flex flex-wrap gap-2 mt-2">
                     {manga.genre.split(",").map((g, i) => (
-                      <Badge key={i} variant="secondary" className="bg-pink-100 text-pink-700 text-xs">
+                      <Badge key={i} variant="secondary" className="bg-brand-violet/15 text-brand-violet border-0 text-xs">
                         {g.trim()}
                       </Badge>
                     ))}
@@ -385,17 +385,17 @@ function MangaDetailContent() {
             </Card>
 
             {/* Status */}
-            <Card className="shadow-xl border-purple-200">
-              <CardHeader className="bg-gradient-to-r from-purple-50 to-pink-50 p-4 md:p-6">
-                <CardTitle className="text-purple-700 text-lg md:text-xl">Status</CardTitle>
+            <Card className="shadow-xl border-border">
+              <CardHeader className="border-b p-4 md:p-6">
+                <CardTitle className="text-foreground text-lg md:text-xl">Status</CardTitle>
               </CardHeader>
               <CardContent className="p-4 md:p-6">
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-4">
                   <div
                     className={`p-3 md:p-4 rounded-lg border-2 cursor-pointer transition-all ${
                       manga.read
-                        ? "border-green-300 bg-green-50 shadow-md"
-                        : "border-gray-200 bg-gray-50 hover:border-green-200"
+                        ? "border-brand-cyan bg-brand-cyan/10 shadow-md"
+                        : "border-border bg-secondary/40 hover:border-brand-cyan/50"
                     }`}
                     onClick={() => toggleStatus("read")}
                   >
@@ -403,7 +403,7 @@ function MangaDetailContent() {
                       <Checkbox checked={manga.read} readOnly />
                       <div className="min-w-0 flex-1">
                         <div className="flex items-center gap-2">
-                          <Star className="h-4 w-4 text-green-600 flex-shrink-0" />
+                          <Star className="h-4 w-4 text-brand-cyan flex-shrink-0" />
                           <span className="font-medium text-sm md:text-base">Gelesen</span>
                         </div>
                         <p className="text-xs text-muted-foreground">Klicken zum Ändern</p>
@@ -414,8 +414,8 @@ function MangaDetailContent() {
                   <div
                     className={`p-3 md:p-4 rounded-lg border-2 cursor-pointer transition-all ${
                       manga.double
-                        ? "border-orange-300 bg-orange-50 shadow-md"
-                        : "border-gray-200 bg-gray-50 hover:border-orange-200"
+                        ? "border-brand-coral bg-brand-coral/10 shadow-md"
+                        : "border-border bg-secondary/40 hover:border-brand-coral/50"
                     }`}
                     onClick={() => toggleStatus("double")}
                   >
@@ -423,7 +423,7 @@ function MangaDetailContent() {
                       <Checkbox checked={manga.double} readOnly />
                       <div className="min-w-0 flex-1">
                         <div className="flex items-center gap-2">
-                          <Copy className="h-4 w-4 text-orange-600 flex-shrink-0" />
+                          <Copy className="h-4 w-4 text-brand-coral flex-shrink-0" />
                           <span className="font-medium text-sm md:text-base">Doppelt</span>
                         </div>
                         <p className="text-xs text-muted-foreground">Klicken zum Ändern</p>
@@ -434,8 +434,8 @@ function MangaDetailContent() {
                   <div
                     className={`p-3 md:p-4 rounded-lg border-2 cursor-pointer transition-all sm:col-span-2 lg:col-span-1 ${
                       manga.newbuy
-                        ? "border-purple-300 bg-purple-50 shadow-md"
-                        : "border-gray-200 bg-gray-50 hover:border-purple-200"
+                        ? "border-brand-violet bg-brand-violet/10 shadow-md"
+                        : "border-border bg-secondary/40 hover:border-brand-violet/50"
                     }`}
                     onClick={() => toggleStatus("newbuy")}
                   >
@@ -443,7 +443,7 @@ function MangaDetailContent() {
                       <Checkbox checked={manga.newbuy} readOnly />
                       <div className="min-w-0 flex-1">
                         <div className="flex items-center gap-2">
-                          <ShoppingCart className="h-4 w-4 text-purple-600 flex-shrink-0" />
+                          <ShoppingCart className="h-4 w-4 text-brand-violet flex-shrink-0" />
                           <span className="font-medium text-sm md:text-base">Neu kaufen</span>
                         </div>
                         <p className="text-xs text-muted-foreground">Klicken zum Ändern</p>
@@ -460,7 +460,7 @@ function MangaDetailContent() {
         <Dialog open={isScannerOpen} onOpenChange={setIsScannerOpen}>
           <DialogContent className="mx-4 max-w-md max-h-[90vh] overflow-y-auto">
             <DialogHeader>
-              <DialogTitle className="text-purple-700 text-lg">ISBN scannen 📷</DialogTitle>
+              <DialogTitle className="text-foreground text-lg">ISBN scannen 📷</DialogTitle>
             </DialogHeader>
             <SimpleISBNScanner onScan={handleISBNScan} onClose={() => setIsScannerOpen(false)} />
           </DialogContent>
@@ -474,7 +474,7 @@ export default function MangaDetailPage() {
   return (
     <Suspense
       fallback={
-        <div className="min-h-screen bg-gradient-to-br from-pink-50 via-purple-50 to-indigo-50">
+        <div className="min-h-screen bg-background">
           <div className="container mx-auto p-6 space-y-6">
             <Skeleton className="h-10 w-32" />
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
