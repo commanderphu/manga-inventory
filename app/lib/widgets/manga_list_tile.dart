@@ -5,6 +5,7 @@ import '../providers/manga_providers.dart';
 import '../screens/manga_detail_screen.dart';
 import '../screens/manga_edit_screen.dart';
 import '../services/sync_service.dart';
+import '../theme/app_theme.dart';
 
 class MangaListTile extends ConsumerWidget {
   final Manga manga;
@@ -54,23 +55,26 @@ class MangaListTile extends ConsumerWidget {
                 if (manga.read)
                   const Padding(
                     padding: EdgeInsets.only(right: 4),
-                    child: Icon(Icons.check_circle, size: 16, color: Colors.green),
+                    child: Icon(Icons.check_circle,
+                        size: 16, color: BrandColors.read),
                   ),
                 if (manga.double)
                   const Padding(
                     padding: EdgeInsets.only(right: 4),
-                    child: Icon(Icons.content_copy, size: 16, color: Colors.orange),
+                    child: Icon(Icons.content_copy,
+                        size: 16, color: BrandColors.duplicate),
                   ),
                 if (manga.newbuy)
                   const Padding(
                     padding: EdgeInsets.only(right: 4),
-                    child: Icon(Icons.shopping_cart, size: 16, color: Colors.purple),
+                    child: Icon(Icons.shopping_cart,
+                        size: 16, color: BrandColors.wishlist),
                   ),
                 if (manga.genre != null)
                   Expanded(
                     child: Text(
                       manga.genre!,
-                      style: TextStyle(fontSize: 11, color: Colors.grey[600]),
+                      style: TextStyle(fontSize: 11, color: BrandColors.muted),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                     ),
@@ -106,7 +110,7 @@ class MangaListTile extends ConsumerWidget {
       width: 40,
       height: 60,
       decoration: BoxDecoration(
-        color: Colors.grey[300],
+        color: BrandColors.surfaceHigh,
         borderRadius: BorderRadius.circular(4),
       ),
       child: const Icon(Icons.book, size: 24),
@@ -139,11 +143,14 @@ class MangaListTile extends ConsumerWidget {
             leading: Icon(
               manga.read ? Icons.remove_circle_outline : Icons.check_circle,
             ),
-            title: Text(manga.read ? 'Als ungelesen markieren' : 'Als gelesen markieren'),
+            title: Text(manga.read
+                ? 'Als ungelesen markieren'
+                : 'Als gelesen markieren'),
             onTap: () async {
               Navigator.pop(context);
               try {
-                await SyncService.instance.updateManga(manga.id, {'read': !manga.read});
+                await SyncService.instance
+                    .updateManga(manga.id, {'read': !manga.read});
                 ref.invalidate(mangaListProvider);
                 ref.invalidate(statsProvider);
                 if (context.mounted) {
@@ -161,8 +168,9 @@ class MangaListTile extends ConsumerWidget {
             },
           ),
           ListTile(
-            leading: const Icon(Icons.delete, color: Colors.red),
-            title: const Text('Löschen', style: TextStyle(color: Colors.red)),
+            leading: const Icon(Icons.delete, color: BrandColors.danger),
+            title: const Text('Löschen',
+                style: TextStyle(color: BrandColors.danger)),
             onTap: () {
               Navigator.pop(context);
               _showDeleteConfirmation(context, ref);
@@ -204,7 +212,8 @@ class MangaListTile extends ConsumerWidget {
                 }
               }
             },
-            child: const Text('Löschen', style: TextStyle(color: Colors.red)),
+            child: const Text('Löschen',
+                style: TextStyle(color: BrandColors.danger)),
           ),
         ],
       ),

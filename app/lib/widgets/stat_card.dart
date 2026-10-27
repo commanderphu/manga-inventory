@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../models/manga.dart';
+import '../theme/app_theme.dart';
 
 class StatsSection extends StatelessWidget {
   final MangaStats stats;
@@ -17,7 +18,7 @@ class StatsSection extends StatelessWidget {
               title: 'Gesamt',
               value: stats.total,
               icon: Icons.book,
-              color: Colors.blue,
+              color: BrandColors.warmWhite,
             ),
           ),
           const SizedBox(width: 8),
@@ -26,7 +27,7 @@ class StatsSection extends StatelessWidget {
               title: 'Gelesen',
               value: stats.read,
               icon: Icons.check_circle,
-              color: Colors.green,
+              color: BrandColors.read,
             ),
           ),
           const SizedBox(width: 8),
@@ -35,7 +36,7 @@ class StatsSection extends StatelessWidget {
               title: 'Duplikate',
               value: stats.duplicates,
               icon: Icons.content_copy,
-              color: Colors.orange,
+              color: BrandColors.duplicate,
             ),
           ),
           const SizedBox(width: 8),
@@ -44,7 +45,7 @@ class StatsSection extends StatelessWidget {
               title: 'Kaufen',
               value: stats.toBuy,
               icon: Icons.shopping_cart,
-              color: Colors.purple,
+              color: BrandColors.wishlist,
             ),
           ),
         ],

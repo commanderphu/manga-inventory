@@ -6,6 +6,7 @@ import '../services/manga_api_service.dart';
 import '../services/sync_service.dart';
 import '../services/isbn_lookup_service.dart';
 import 'isbn_scanner_screen.dart';
+import '../theme/app_theme.dart';
 
 class MangaEditScreen extends ConsumerStatefulWidget {
   final Manga manga;
@@ -49,8 +50,10 @@ class _MangaEditScreenState extends ConsumerState<MangaEditScreen> {
     _autorController = TextEditingController(text: widget.manga.autor ?? '');
     _verlagController = TextEditingController(text: widget.manga.verlag ?? '');
     _isbnController = TextEditingController(text: widget.manga.isbn ?? '');
-    _spracheController = TextEditingController(text: widget.manga.sprache ?? '');
-    _coverImageController = TextEditingController(text: widget.manga.coverImage ?? '');
+    _spracheController =
+        TextEditingController(text: widget.manga.sprache ?? '');
+    _coverImageController =
+        TextEditingController(text: widget.manga.coverImage ?? '');
 
     _read = widget.manga.read;
     _double = widget.manga.double;
@@ -104,7 +107,8 @@ class _MangaEditScreenState extends ConsumerState<MangaEditScreen> {
           if (_genreController.text.isEmpty && bookInfo.categories != null) {
             _genreController.text = bookInfo.categories!;
           }
-          if (_coverImageController.text.isEmpty && bookInfo.coverImage != null) {
+          if (_coverImageController.text.isEmpty &&
+              bookInfo.coverImage != null) {
             _coverImageController.text = bookInfo.coverImage!;
           }
         });
@@ -113,7 +117,7 @@ class _MangaEditScreenState extends ConsumerState<MangaEditScreen> {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
               content: Text('Informationen erfolgreich abgerufen!'),
-              backgroundColor: Colors.green,
+              backgroundColor: BrandColors.success,
             ),
           );
         }
@@ -122,7 +126,7 @@ class _MangaEditScreenState extends ConsumerState<MangaEditScreen> {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
               content: Text('Keine Informationen für diese ISBN gefunden'),
-              backgroundColor: Colors.orange,
+              backgroundColor: BrandColors.warning,
             ),
           );
         }
@@ -132,7 +136,7 @@ class _MangaEditScreenState extends ConsumerState<MangaEditScreen> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('Fehler beim Abrufen: $e'),
-            backgroundColor: Colors.red,
+            backgroundColor: BrandColors.danger,
           ),
         );
       }
@@ -157,19 +161,34 @@ class _MangaEditScreenState extends ConsumerState<MangaEditScreen> {
     try {
       final updates = {
         'titel': _titelController.text.trim(),
-        'band': _bandController.text.trim().isEmpty ? null : _bandController.text.trim(),
-        'genre': _genreController.text.trim().isEmpty ? null : _genreController.text.trim(),
-        'autor': _autorController.text.trim().isEmpty ? null : _autorController.text.trim(),
-        'verlag': _verlagController.text.trim().isEmpty ? null : _verlagController.text.trim(),
-        'isbn': _isbnController.text.trim().isEmpty ? null : _isbnController.text.trim(),
-        'sprache': _spracheController.text.trim().isEmpty ? null : _spracheController.text.trim(),
-        'cover_image': _coverImageController.text.trim().isEmpty ? null : _coverImageController.text.trim(),
+        'band': _bandController.text.trim().isEmpty
+            ? null
+            : _bandController.text.trim(),
+        'genre': _genreController.text.trim().isEmpty
+            ? null
+            : _genreController.text.trim(),
+        'autor': _autorController.text.trim().isEmpty
+            ? null
+            : _autorController.text.trim(),
+        'verlag': _verlagController.text.trim().isEmpty
+            ? null
+            : _verlagController.text.trim(),
+        'isbn': _isbnController.text.trim().isEmpty
+            ? null
+            : _isbnController.text.trim(),
+        'sprache': _spracheController.text.trim().isEmpty
+            ? null
+            : _spracheController.text.trim(),
+        'cover_image': _coverImageController.text.trim().isEmpty
+            ? null
+            : _coverImageController.text.trim(),
         'read': _read,
         'double': _double,
         'newbuy': _newbuy,
       };
 
-      final updated = await SyncService.instance.updateManga(widget.manga.id, updates);
+      final updated =
+          await SyncService.instance.updateManga(widget.manga.id, updates);
       final isOffline = !SyncService.instance.isOnline;
 
       if (mounted) {
@@ -178,7 +197,8 @@ class _MangaEditScreenState extends ConsumerState<MangaEditScreen> {
             content: Text(isOffline
                 ? 'Offline gespeichert – wird synchronisiert'
                 : 'Manga erfolgreich aktualisiert'),
-            backgroundColor: isOffline ? Colors.orange : Colors.green,
+            backgroundColor:
+                isOffline ? BrandColors.warning : BrandColors.success,
           ),
         );
         Navigator.pop(context, true);
@@ -188,7 +208,7 @@ class _MangaEditScreenState extends ConsumerState<MangaEditScreen> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('Fehler beim Aktualisieren: $e'),
-            backgroundColor: Colors.red,
+            backgroundColor: BrandColors.danger,
           ),
         );
       }
@@ -404,7 +424,8 @@ class _MangaEditScreenState extends ConsumerState<MangaEditScreen> {
                                       ),
                                       actions: [
                                         TextButton(
-                                          onPressed: () => Navigator.pop(context),
+                                          onPressed: () =>
+                                              Navigator.pop(context),
                                           child: const Text('OK'),
                                         ),
                                       ],
@@ -444,7 +465,8 @@ class _MangaEditScreenState extends ConsumerState<MangaEditScreen> {
                                       ),
                                       actions: [
                                         TextButton(
-                                          onPressed: () => Navigator.pop(context),
+                                          onPressed: () =>
+                                              Navigator.pop(context),
                                           child: const Text('OK'),
                                         ),
                                       ],
@@ -473,7 +495,8 @@ class _MangaEditScreenState extends ConsumerState<MangaEditScreen> {
                   children: [
                     SwitchListTile(
                       title: const Text('Gelesen'),
-                      subtitle: const Text('Habe ich diesen Manga schon gelesen?'),
+                      subtitle:
+                          const Text('Habe ich diesen Manga schon gelesen?'),
                       value: _read,
                       onChanged: (value) {
                         setState(() {
@@ -484,7 +507,8 @@ class _MangaEditScreenState extends ConsumerState<MangaEditScreen> {
                     ),
                     SwitchListTile(
                       title: const Text('Doppelt'),
-                      subtitle: const Text('Besitze ich diesen Manga mehrfach?'),
+                      subtitle:
+                          const Text('Besitze ich diesen Manga mehrfach?'),
                       value: _double,
                       onChanged: (value) {
                         setState(() {
@@ -520,7 +544,8 @@ class _MangaEditScreenState extends ConsumerState<MangaEditScreen> {
                       child: CircularProgressIndicator(strokeWidth: 2),
                     )
                   : const Icon(Icons.save),
-              label: Text(_isLoading ? 'Aktualisiere...' : 'Änderungen speichern'),
+              label:
+                  Text(_isLoading ? 'Aktualisiere...' : 'Änderungen speichern'),
               style: FilledButton.styleFrom(
                 padding: const EdgeInsets.all(16),
               ),

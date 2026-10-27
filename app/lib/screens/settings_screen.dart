@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../providers/auth_provider.dart';
+import '../theme/app_theme.dart';
 
 class SettingsScreen extends ConsumerWidget {
   const SettingsScreen({super.key});
@@ -56,7 +57,7 @@ class SettingsScreen extends ConsumerWidget {
                 user['email'] ?? '',
                 textAlign: TextAlign.center,
                 style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                      color: Colors.grey[600],
+                      color: BrandColors.muted,
                     ),
               ),
               const Divider(height: 32),
@@ -76,13 +77,16 @@ class SettingsScreen extends ConsumerWidget {
                 value: notifications,
                 onChanged: (value) async {
                   try {
-                    await ref.read(authNotifierProvider.notifier).updateSettings({
+                    await ref
+                        .read(authNotifierProvider.notifier)
+                        .updateSettings({
                       'theme': theme,
                       'notifications': value,
                     });
                     if (context.mounted) {
                       ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text('Einstellungen gespeichert')),
+                        const SnackBar(
+                            content: Text('Einstellungen gespeichert')),
                       );
                     }
                   } catch (e) {
@@ -90,7 +94,7 @@ class SettingsScreen extends ConsumerWidget {
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(
                           content: Text('Fehler: ${e.toString()}'),
-                          backgroundColor: Colors.red,
+                          backgroundColor: BrandColors.danger,
                         ),
                       );
                     }
@@ -99,17 +103,18 @@ class SettingsScreen extends ConsumerWidget {
               ),
               const Divider(height: 32),
               ListTile(
-                leading: const Icon(Icons.logout, color: Colors.red),
+                leading: const Icon(Icons.logout, color: BrandColors.danger),
                 title: const Text(
                   'Abmelden',
-                  style: TextStyle(color: Colors.red),
+                  style: TextStyle(color: BrandColors.danger),
                 ),
                 onTap: () async {
                   final confirmed = await showDialog<bool>(
                     context: context,
                     builder: (context) => AlertDialog(
                       title: const Text('Abmelden'),
-                      content: const Text('Möchtest du dich wirklich abmelden?'),
+                      content:
+                          const Text('Möchtest du dich wirklich abmelden?'),
                       actions: [
                         TextButton(
                           onPressed: () => Navigator.of(context).pop(false),
@@ -118,7 +123,7 @@ class SettingsScreen extends ConsumerWidget {
                         FilledButton(
                           onPressed: () => Navigator.of(context).pop(true),
                           style: FilledButton.styleFrom(
-                            backgroundColor: Colors.red,
+                            backgroundColor: BrandColors.danger,
                           ),
                           child: const Text('Abmelden'),
                         ),
@@ -158,7 +163,8 @@ class SettingsScreen extends ConsumerWidget {
     }
   }
 
-  void _showThemeDialog(BuildContext context, WidgetRef ref, String currentTheme) {
+  void _showThemeDialog(
+      BuildContext context, WidgetRef ref, String currentTheme) {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
@@ -224,7 +230,7 @@ class SettingsScreen extends ConsumerWidget {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('Fehler: ${e.toString()}'),
-            backgroundColor: Colors.red,
+            backgroundColor: BrandColors.danger,
           ),
         );
       }

@@ -7,6 +7,7 @@ import '../widgets/stat_card.dart';
 import '../widgets/pagination_widget.dart';
 import '../widgets/offline_banner.dart';
 import 'manga_add_screen.dart';
+import '../theme/app_theme.dart';
 
 class MangaListScreen extends ConsumerStatefulWidget {
   const MangaListScreen({super.key});
@@ -167,7 +168,7 @@ class _MangaListScreenState extends ConsumerState<MangaListScreen> {
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             const Icon(Icons.error_outline,
-                                size: 48, color: Colors.red),
+                                size: 48, color: BrandColors.danger),
                             const SizedBox(height: 16),
                             Text('Fehler: $err'),
                             const SizedBox(height: 16),
@@ -377,8 +378,7 @@ class _FilterTextFieldState extends ConsumerState<_FilterTextField> {
             : null,
       ),
       onChanged: (value) {
-        ref.read(widget.provider.notifier).state =
-            value.isEmpty ? null : value;
+        ref.read(widget.provider.notifier).state = value.isEmpty ? null : value;
       },
     );
   }
@@ -428,4 +428,3 @@ class _BooleanFilterChip extends ConsumerWidget {
     );
   }
 }
-

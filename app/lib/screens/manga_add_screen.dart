@@ -6,6 +6,7 @@ import '../services/manga_api_service.dart';
 import '../services/sync_service.dart';
 import '../services/isbn_lookup_service.dart';
 import 'isbn_scanner_screen.dart';
+import '../theme/app_theme.dart';
 
 class MangaAddScreen extends ConsumerStatefulWidget {
   const MangaAddScreen({super.key});
@@ -84,7 +85,8 @@ class _MangaAddScreenState extends ConsumerState<MangaAddScreen> {
           if (_genreController.text.isEmpty && bookInfo.categories != null) {
             _genreController.text = bookInfo.categories!;
           }
-          if (_coverImageController.text.isEmpty && bookInfo.coverImage != null) {
+          if (_coverImageController.text.isEmpty &&
+              bookInfo.coverImage != null) {
             _coverImageController.text = bookInfo.coverImage!;
           }
         });
@@ -93,7 +95,7 @@ class _MangaAddScreenState extends ConsumerState<MangaAddScreen> {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
               content: Text('Informationen erfolgreich abgerufen!'),
-              backgroundColor: Colors.green,
+              backgroundColor: BrandColors.success,
             ),
           );
         }
@@ -102,7 +104,7 @@ class _MangaAddScreenState extends ConsumerState<MangaAddScreen> {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
               content: Text('Keine Informationen für diese ISBN gefunden'),
-              backgroundColor: Colors.orange,
+              backgroundColor: BrandColors.warning,
             ),
           );
         }
@@ -112,7 +114,7 @@ class _MangaAddScreenState extends ConsumerState<MangaAddScreen> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('Fehler beim Abrufen: $e'),
-            backgroundColor: Colors.red,
+            backgroundColor: BrandColors.danger,
           ),
         );
       }
@@ -125,13 +127,16 @@ class _MangaAddScreenState extends ConsumerState<MangaAddScreen> {
     }
   }
 
-  Future<void> _saveManga({bool forceDouble = false, bool forceSave = false}) async {
+  Future<void> _saveManga(
+      {bool forceDouble = false, bool forceSave = false}) async {
     if (!_formKey.currentState!.validate()) {
       return;
     }
 
     final titel = _titelController.text.trim();
-    final band = _bandController.text.trim().isEmpty ? null : _bandController.text.trim();
+    final band = _bandController.text.trim().isEmpty
+        ? null
+        : _bandController.text.trim();
 
     // Duplikat-Prüfung vor dem Speichern
     if (!forceSave && !forceDouble) {
@@ -149,7 +154,7 @@ class _MangaAddScreenState extends ConsumerState<MangaAddScreen> {
             builder: (context) => AlertDialog(
               title: const Row(
                 children: [
-                  Icon(Icons.warning_amber, color: Colors.orange),
+                  Icon(Icons.warning_amber, color: BrandColors.warning),
                   SizedBox(width: 8),
                   Text('Mögliches Duplikat'),
                 ],
@@ -163,20 +168,22 @@ class _MangaAddScreenState extends ConsumerState<MangaAddScreen> {
                   ),
                   const SizedBox(height: 12),
                   ...duplicates.map((m) => Padding(
-                    padding: const EdgeInsets.only(bottom: 4),
-                    child: Row(
-                      children: [
-                        const Icon(Icons.book, size: 16, color: Colors.grey),
-                        const SizedBox(width: 8),
-                        Expanded(
-                          child: Text(
-                            '${m.titel}${m.band != null ? ' Bd. ${m.band}' : ''}',
-                            style: const TextStyle(fontWeight: FontWeight.w500),
-                          ),
+                        padding: const EdgeInsets.only(bottom: 4),
+                        child: Row(
+                          children: [
+                            const Icon(Icons.book,
+                                size: 16, color: BrandColors.muted),
+                            const SizedBox(width: 8),
+                            Expanded(
+                              child: Text(
+                                '${m.titel}${m.band != null ? ' Bd. ${m.band}' : ''}',
+                                style: const TextStyle(
+                                    fontWeight: FontWeight.w500),
+                              ),
+                            ),
+                          ],
                         ),
-                      ],
-                    ),
-                  )),
+                      )),
                   const SizedBox(height: 12),
                   const Text('Was möchtest du tun?'),
                 ],
@@ -221,12 +228,24 @@ class _MangaAddScreenState extends ConsumerState<MangaAddScreen> {
         id: '',
         titel: titel,
         band: band,
-        genre: _genreController.text.trim().isEmpty ? null : _genreController.text.trim(),
-        autor: _autorController.text.trim().isEmpty ? null : _autorController.text.trim(),
-        verlag: _verlagController.text.trim().isEmpty ? null : _verlagController.text.trim(),
-        isbn: _isbnController.text.trim().isEmpty ? null : _isbnController.text.trim(),
-        sprache: _spracheController.text.trim().isEmpty ? null : _spracheController.text.trim(),
-        coverImage: _coverImageController.text.trim().isEmpty ? null : _coverImageController.text.trim(),
+        genre: _genreController.text.trim().isEmpty
+            ? null
+            : _genreController.text.trim(),
+        autor: _autorController.text.trim().isEmpty
+            ? null
+            : _autorController.text.trim(),
+        verlag: _verlagController.text.trim().isEmpty
+            ? null
+            : _verlagController.text.trim(),
+        isbn: _isbnController.text.trim().isEmpty
+            ? null
+            : _isbnController.text.trim(),
+        sprache: _spracheController.text.trim().isEmpty
+            ? null
+            : _spracheController.text.trim(),
+        coverImage: _coverImageController.text.trim().isEmpty
+            ? null
+            : _coverImageController.text.trim(),
         read: _read,
         double: _double,
         newbuy: _newbuy,
@@ -241,7 +260,8 @@ class _MangaAddScreenState extends ConsumerState<MangaAddScreen> {
             content: Text(isOffline
                 ? 'Offline gespeichert – wird synchronisiert'
                 : 'Manga erfolgreich hinzugefügt'),
-            backgroundColor: isOffline ? Colors.orange : Colors.green,
+            backgroundColor:
+                isOffline ? BrandColors.warning : BrandColors.success,
           ),
         );
         Navigator.pop(context, true);
@@ -251,7 +271,7 @@ class _MangaAddScreenState extends ConsumerState<MangaAddScreen> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('Fehler beim Hinzufügen: $e'),
-            backgroundColor: Colors.red,
+            backgroundColor: BrandColors.danger,
           ),
         );
       }
@@ -467,7 +487,8 @@ class _MangaAddScreenState extends ConsumerState<MangaAddScreen> {
                                       ),
                                       actions: [
                                         TextButton(
-                                          onPressed: () => Navigator.pop(context),
+                                          onPressed: () =>
+                                              Navigator.pop(context),
                                           child: const Text('OK'),
                                         ),
                                       ],
@@ -507,7 +528,8 @@ class _MangaAddScreenState extends ConsumerState<MangaAddScreen> {
                                       ),
                                       actions: [
                                         TextButton(
-                                          onPressed: () => Navigator.pop(context),
+                                          onPressed: () =>
+                                              Navigator.pop(context),
                                           child: const Text('OK'),
                                         ),
                                       ],
@@ -536,7 +558,8 @@ class _MangaAddScreenState extends ConsumerState<MangaAddScreen> {
                   children: [
                     SwitchListTile(
                       title: const Text('Gelesen'),
-                      subtitle: const Text('Habe ich diesen Manga schon gelesen?'),
+                      subtitle:
+                          const Text('Habe ich diesen Manga schon gelesen?'),
                       value: _read,
                       onChanged: (value) {
                         setState(() {
@@ -547,7 +570,8 @@ class _MangaAddScreenState extends ConsumerState<MangaAddScreen> {
                     ),
                     SwitchListTile(
                       title: const Text('Doppelt'),
-                      subtitle: const Text('Besitze ich diesen Manga mehrfach?'),
+                      subtitle:
+                          const Text('Besitze ich diesen Manga mehrfach?'),
                       value: _double,
                       onChanged: (value) {
                         setState(() {

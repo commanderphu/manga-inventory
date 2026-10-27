@@ -13,6 +13,13 @@ class BrandColors {
   static const read = neonCyan;
   static const duplicate = coralPink;
   static const wishlist = neonViolet;
+  // Rückmeldungen und Hilfsfarben
+  static const success = neonCyan;
+  static const warning = coralPink;
+  static const danger =
+      Color(0xFFFF4D5E); // Löschen, Fehler — bewusst nicht Coral
+  static const muted = Color(0xFF8A93A6); // Nebentext
+  static const surfaceHigh = Color(0xFF1A2235); // Platzhalter, erhöhte Flächen
 }
 
 class AppTheme {
@@ -25,32 +32,35 @@ class AppTheme {
         onSecondary: BrandColors.warmWhite,
         tertiary: BrandColors.coralPink,
         onTertiary: BrandColors.deepNavy,
-        error: Color(0xFFFF4D5E),
+        error: BrandColors.danger,
         onError: BrandColors.deepNavy,
         surface: BrandColors.deepNavy,
         onSurface: BrandColors.warmWhite,
         surfaceContainerLow: BrandColors.graphite,
         surfaceContainer: BrandColors.graphite,
-        surfaceContainerHigh: Color(0xFF1A2235),
-        outline: Color(0xFF2A3348));
+        surfaceContainerHigh: BrandColors.surfaceHigh,
+        outline: BrandColors.muted);
 
     return ThemeData(
-      colorScheme: scheme,
-      useMaterial3: true,
-      scaffoldBackgroundColor: BrandColors.deepNavy,
-      cardTheme: CardThemeData(
-        color: BrandColors.graphite,
-        elevation: 0,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
-          side: const BorderSide(color: Color(0xFF1F2738)),
+        colorScheme: scheme,
+        useMaterial3: true,
+        scaffoldBackgroundColor: BrandColors.deepNavy,
+        cardTheme: CardThemeData(
+          color: BrandColors.graphite,
+          elevation: 0,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+            side: const BorderSide(color: Color(0xFF1F2738)),
+          ),
         ),
-      ),
-      appBarTheme: const AppBarTheme(
-        backgroundColor: BrandColors.deepNavy,
-        foregroundColor: BrandColors.warmWhite,
-        elevation: 0,
-      ),
-    );
+        appBarTheme: const AppBarTheme(
+          backgroundColor: BrandColors.deepNavy,
+          foregroundColor: BrandColors.warmWhite,
+          elevation: 0,
+        ),
+        snackBarTheme: const SnackBarThemeData(
+          contentTextStyle: TextStyle(color: BrandColors.deepNavy),
+          actionTextColor: BrandColors.deepNavy,
+        ));
   }
 }

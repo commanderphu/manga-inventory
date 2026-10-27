@@ -5,6 +5,7 @@ import '../models/manga.dart';
 import '../providers/manga_providers.dart';
 import '../widgets/detail_card.dart';
 import 'manga_edit_screen.dart';
+import '../theme/app_theme.dart';
 
 class MangaDetailScreen extends ConsumerWidget {
   final Manga manga;
@@ -43,7 +44,9 @@ class MangaDetailScreen extends ConsumerWidget {
                         fit: BoxFit.cover,
                         errorBuilder: (context, error, stackTrace) {
                           return Container(
-                            color: Theme.of(context).colorScheme.surfaceContainerHighest,
+                            color: Theme.of(context)
+                                .colorScheme
+                                .surfaceContainerHighest,
                             child: const Center(
                               child: Icon(Icons.book, size: 100),
                             ),
@@ -52,7 +55,8 @@ class MangaDetailScreen extends ConsumerWidget {
                       ),
                     )
                   : Container(
-                      color: Theme.of(context).colorScheme.surfaceContainerHighest,
+                      color:
+                          Theme.of(context).colorScheme.surfaceContainerHighest,
                       child: const Center(
                         child: Icon(Icons.book, size: 100),
                       ),
@@ -76,19 +80,21 @@ class MangaDetailScreen extends ConsumerWidget {
                         Chip(
                           avatar: const Icon(Icons.check_circle, size: 18),
                           label: const Text('Gelesen'),
-                          backgroundColor: Colors.green.withOpacity(0.2),
+                          backgroundColor: BrandColors.read.withOpacity(0.2),
                         ),
                       if (manga.double)
                         Chip(
                           avatar: const Icon(Icons.content_copy, size: 18),
                           label: const Text('Duplikat'),
-                          backgroundColor: Colors.orange.withOpacity(0.2),
+                          backgroundColor:
+                              BrandColors.duplicate.withOpacity(0.2),
                         ),
                       if (manga.newbuy)
                         Chip(
                           avatar: const Icon(Icons.shopping_cart, size: 18),
                           label: const Text('Kaufen'),
-                          backgroundColor: Colors.purple.withOpacity(0.2),
+                          backgroundColor:
+                              BrandColors.wishlist.withOpacity(0.2),
                         ),
                     ],
                   ),
@@ -168,21 +174,27 @@ class MangaDetailScreen extends ConsumerWidget {
                         children: [
                           ListTile(
                             leading: Icon(
-                              manga.read ? Icons.remove_circle_outline : Icons.check_circle,
-                              color: Colors.green,
+                              manga.read
+                                  ? Icons.remove_circle_outline
+                                  : Icons.check_circle,
+                              color: BrandColors.read,
                             ),
                             title: Text(
-                              manga.read ? 'Als ungelesen markieren' : 'Als gelesen markieren',
+                              manga.read
+                                  ? 'Als ungelesen markieren'
+                                  : 'Als gelesen markieren',
                             ),
                             onTap: () async {
                               try {
                                 final apiService = ref.read(mangaApiProvider);
-                                await apiService.updateManga(manga.id, {'read': !manga.read});
+                                await apiService.updateManga(
+                                    manga.id, {'read': !manga.read});
                                 ref.invalidate(mangaListProvider);
                                 ref.invalidate(statsProvider);
                                 if (context.mounted) {
                                   ScaffoldMessenger.of(context).showSnackBar(
-                                    const SnackBar(content: Text('Status aktualisiert')),
+                                    const SnackBar(
+                                        content: Text('Status aktualisiert')),
                                   );
                                   Navigator.pop(context);
                                 }
@@ -197,10 +209,11 @@ class MangaDetailScreen extends ConsumerWidget {
                           ),
                           const Divider(height: 1),
                           ListTile(
-                            leading: const Icon(Icons.delete, color: Colors.red),
+                            leading: const Icon(Icons.delete,
+                                color: BrandColors.danger),
                             title: const Text(
                               'Manga löschen',
-                              style: TextStyle(color: Colors.red),
+                              style: TextStyle(color: BrandColors.danger),
                             ),
                             onTap: () => _showDeleteConfirmation(context, ref),
                           ),
@@ -270,11 +283,11 @@ class MangaDetailScreen extends ConsumerWidget {
                 }
               }
             },
-            child: const Text('Löschen', style: TextStyle(color: Colors.red)),
+            child: const Text('Löschen',
+                style: TextStyle(color: BrandColors.danger)),
           ),
         ],
       ),
     );
   }
 }
-
