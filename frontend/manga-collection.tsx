@@ -35,8 +35,6 @@ import {
   Filter,
   X,
   Star,
-  Heart,
-  Sparkles,
   Loader2,
   RefreshCw,
   Camera,
@@ -759,17 +757,16 @@ function MangaCollectionContent() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-pink-50 via-purple-50 to-indigo-50">
+    <div className="min-h-screen bg-background">
       <div className="container mx-auto p-6 space-y-6">
         <div className="flex flex-col space-y-4">
           {/* Header with anime styling */}
           <div className="text-center space-y-2">
-            <h1 className="text-4xl font-bold bg-gradient-to-r from-pink-500 via-purple-500 to-indigo-500 bg-clip-text text-transparent flex items-center justify-center gap-2">
-              <Sparkles className="h-8 w-8 text-pink-500" />
-              Manga Collection
-              <Heart className="h-8 w-8 text-purple-500" />
+             <h1 className="text-4xl font-bold uppercase">
+              <span className="text-foreground">Manga</span>{" "}
+              <span className="text-brand-coral">Inventory</span>
             </h1>
-            <p className="text-muted-foreground">Deine persönliche Manga-Bibliothek ✨</p>
+            <p className="text-muted-foreground">Deine Sammlung. Immer im Blick.</p>
           </div>
 
           {/* Error Alert */}
@@ -796,61 +793,26 @@ function MangaCollectionContent() {
 
           {/* Stats Cards with anime colors */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            <Card className="bg-gradient-to-br from-blue-400 to-blue-600 text-white shadow-lg hover:shadow-xl transition-shadow">
-              <CardContent className="p-4">
-                <div className="flex items-center space-x-2">
-                  <BookOpen className="h-5 w-5" />
-                  <div>
-                    <p className="text-sm opacity-90">Gesamt</p>
-                    <p className="text-2xl font-bold">
-                      {loading ? <Skeleton className="h-8 w-12 bg-white/20" /> : stats?.total || total}
-                    </p>
+            {[
+              { label: "Gesamt", value: stats?.total || total, icon: BookOpen, color: "text-foreground" },
+              { label: "Gelesen", value: stats?.read || 0, icon: Star, color: "text-brand-cyan" },
+              { label: "Doppelt", value: stats?.doubles || 0, icon: Copy, color: "text-brand-coral" },
+              { label: "Neu kaufen", value: stats?.newbuys || 0, icon: ShoppingCart, color: "text-brand-violet" },
+            ].map(({ label, value, icon: Icon, color }) => (
+              <Card key={label} className="shadow-lg">
+                <CardContent className="p-4">
+                  <div className="flex items-center space-x-3">
+                    <Icon className={`h-5 w-5 ${color}`} />
+                    <div>
+                      <p className="text-sm text-muted-foreground">{label}</p>
+                      <div className={`text-2xl font-bold font-display ${color}`}>
+                        {loading ? <Skeleton className="h-8 w-12" /> : value}
+                      </div>
+                    </div>
                   </div>
-                </div>
-              </CardContent>
-            </Card>
-
-            <Card className="bg-gradient-to-br from-green-400 to-green-600 text-white shadow-lg hover:shadow-xl transition-shadow">
-              <CardContent className="p-4">
-                <div className="flex items-center space-x-2">
-                  <Star className="h-5 w-5" />
-                  <div>
-                    <p className="text-sm opacity-90">Gelesen</p>
-                    <p className="text-2xl font-bold">
-                      {loading ? <Skeleton className="h-8 w-12 bg-white/20" /> : stats?.read || 0}
-                    </p>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-
-            <Card className="bg-gradient-to-br from-orange-400 to-orange-600 text-white shadow-lg hover:shadow-xl transition-shadow">
-              <CardContent className="p-4">
-                <div className="flex items-center space-x-2">
-                  <Copy className="h-5 w-5" />
-                  <div>
-                    <p className="text-sm opacity-90">Doppelt</p>
-                    <p className="text-2xl font-bold">
-                      {loading ? <Skeleton className="h-8 w-12 bg-white/20" /> : stats?.doubles || 0}
-                    </p>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-
-            <Card className="bg-gradient-to-br from-purple-400 to-purple-600 text-white shadow-lg hover:shadow-xl transition-shadow">
-              <CardContent className="p-4">
-                <div className="flex items-center space-x-2">
-                  <ShoppingCart className="h-5 w-5" />
-                  <div>
-                    <p className="text-sm opacity-90">Neu kaufen</p>
-                    <p className="text-2xl font-bold">
-                      {loading ? <Skeleton className="h-8 w-12 bg-white/20" /> : stats?.newbuys || 0}
-                    </p>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
+                </CardContent>
+              </Card>
+            ))}
           </div>
 
           {/* Search and Actions */}
@@ -1612,7 +1574,7 @@ export default function MangaCollection() {
   return (
     <Suspense
       fallback={
-        <div className="min-h-screen bg-gradient-to-br from-pink-50 via-purple-50 to-indigo-50">
+        <div className="min-h-screen bg-background">
           <div className="container mx-auto p-6 space-y-6">
             <div className="text-center space-y-2">
               <Skeleton className="h-12 w-96 mx-auto" />
