@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import {  use, useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
@@ -14,9 +14,9 @@ import { ArrowLeft, Loader2, Search, Camera, Heart, Sparkles } from "lucide-reac
 import { mangaAPI, type Manga } from "@/lib/api"
 import { SimpleISBNScanner } from "@/components/simple-isbn-scanner"
 
-export default function EditMangaPage({ params }: { params: { id: string } }) {
+export default function EditMangaPage({ params }: { params: Promise<{ id: string }> }) {
   const router = useRouter()
-  const mangaId = params.id
+  const { id: mangaId } = use(params)
 
   const [manga, setManga] = useState<Manga | null>(null)
   const [loading, setLoading] = useState(true)
