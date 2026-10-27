@@ -20,46 +20,50 @@ class PaginationWidget extends ConsumerWidget {
 
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          // |< erste Seite
-          _NavButton(
-            icon: Icons.first_page,
-            onPressed: currentPage > 1
-                ? () => ref.read(currentPageProvider.notifier).state = 1
-                : null,
-          ),
-          // < vorherige Seite
-          _NavButton(
-            icon: Icons.chevron_left,
-            onPressed: currentPage > 1
-                ? () =>
-                    ref.read(currentPageProvider.notifier).state = currentPage - 1
-                : null,
-          ),
+      child: FittedBox(
+        fit: BoxFit.scaleDown,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            // |< erste Seite
+            _NavButton(
+              icon: Icons.first_page,
+              onPressed: currentPage > 1
+                  ? () => ref.read(currentPageProvider.notifier).state = 1
+                  : null,
+            ),
+            // < vorherige Seite
+            _NavButton(
+              icon: Icons.chevron_left,
+              onPressed: currentPage > 1
+                  ? () => ref.read(currentPageProvider.notifier).state =
+                      currentPage - 1
+                  : null,
+            ),
 
-          // Seitenzahlen mit Punkten als Trenner
-          ..._buildPageItems(context, ref, currentPage, totalPages, colorScheme),
+            // Seitenzahlen mit Punkten als Trenner
+            ..._buildPageItems(
+                context, ref, currentPage, totalPages, colorScheme),
 
-          // > nächste Seite
-          _NavButton(
-            icon: Icons.chevron_right,
-            onPressed: currentPage < totalPages
-                ? () =>
-                    ref.read(currentPageProvider.notifier).state = currentPage + 1
-                : null,
-          ),
-          // >| letzte Seite
-          _NavButton(
-            icon: Icons.last_page,
-            onPressed: currentPage < totalPages
-                ? () =>
-                    ref.read(currentPageProvider.notifier).state = totalPages
-                : null,
-          ),
-        ],
+            // > nächste Seite
+            _NavButton(
+              icon: Icons.chevron_right,
+              onPressed: currentPage < totalPages
+                  ? () => ref.read(currentPageProvider.notifier).state =
+                      currentPage + 1
+                  : null,
+            ),
+            // >| letzte Seite
+            _NavButton(
+              icon: Icons.last_page,
+              onPressed: currentPage < totalPages
+                  ? () =>
+                      ref.read(currentPageProvider.notifier).state = totalPages
+                  : null,
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -74,7 +78,9 @@ class PaginationWidget extends ConsumerWidget {
     int start = (currentPage - 2).clamp(1, totalPages);
     int end = (currentPage + 2).clamp(1, totalPages);
     if (currentPage <= 3) end = 5.clamp(1, totalPages);
-    if (currentPage >= totalPages - 2) start = (totalPages - 4).clamp(1, totalPages);
+    if (currentPage >= totalPages - 2) {
+      start = (totalPages - 4).clamp(1, totalPages);
+    }
 
     final pages = [for (int i = start; i <= end; i++) i];
     final items = <Widget>[];
@@ -102,8 +108,7 @@ class PaginationWidget extends ConsumerWidget {
               '$page',
               style: TextStyle(
                 fontSize: 14,
-                fontWeight:
-                    isActive ? FontWeight.bold : FontWeight.normal,
+                fontWeight: isActive ? FontWeight.bold : FontWeight.normal,
                 color: isActive
                     ? colorScheme.onPrimary
                     : colorScheme.onSurfaceVariant,
