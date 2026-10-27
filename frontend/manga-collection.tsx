@@ -129,23 +129,23 @@ function EnhancedPagination({
   const endItem = Math.min(currentPage * itemsPerPage, totalItems)
 
   return (
-    <div className="bg-gradient-to-r from-purple-50 via-pink-50 to-indigo-50 border-t border-purple-100 px-4 py-6">
+    <div className="border-t px-4 py-6">
       <div className="flex flex-col space-y-4">
         {/* Info Section */}
         <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
-          <div className="flex items-center space-x-2 text-sm text-purple-700">
+          <div className="flex items-center space-x-2 text-sm text-foreground">
             <div className="flex items-center space-x-1">
               <BookOpen className="h-4 w-4" />
               <span className="font-medium">
                 {startItem}-{endItem} von {totalItems.toLocaleString()} Manga
               </span>
             </div>
-            {loading && <Loader2 className="h-4 w-4 animate-spin text-purple-500" />}
+            {loading && <Loader2 className="h-4 w-4 animate-spin text-primary" />}
           </div>
 
           {/* Page Size Selector */}
           <div className="flex items-center space-x-2 text-sm">
-            <span className="text-purple-700">Einträge pro Seite:</span>
+            <span className="text-foreground">Einträge pro Seite:</span>
             <Select
               value={itemsPerPage.toString()}
               onValueChange={(value) => {
@@ -154,7 +154,7 @@ function EnhancedPagination({
               }}
               disabled={loading}
             >
-              <SelectTrigger className="w-20 h-8 border-purple-200">
+              <SelectTrigger className="w-20 h-8 border-border">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
@@ -176,7 +176,7 @@ function EnhancedPagination({
               size="sm"
               onClick={() => onPageChange(1)}
               disabled={currentPage === 1 || loading}
-              className="h-9 px-3 border-purple-200 hover:bg-purple-50 hover:border-purple-300 transition-all duration-200"
+              className="h-9 px-3 border-border hover:bg-accent hover:border-primary/50 transition-all duration-200"
             >
               <ChevronsLeft className="h-4 w-4" />
               <span className="hidden sm:inline ml-1">Erste</span>
@@ -187,7 +187,7 @@ function EnhancedPagination({
               size="sm"
               onClick={() => onPageChange(currentPage - 1)}
               disabled={currentPage === 1 || loading}
-              className="h-9 px-3 border-purple-200 hover:bg-purple-50 hover:border-purple-300 transition-all duration-200"
+              className="h-9 px-3 border-border hover:bg-accent hover:border-primary/50 transition-all duration-200"
             >
               <ChevronLeft className="h-4 w-4" />
               <span className="hidden sm:inline ml-1">Zurück</span>
@@ -203,7 +203,7 @@ function EnhancedPagination({
                     <Button
                       variant="ghost"
                       size="sm"
-                      className="h-9 w-9 text-purple-600 hover:bg-purple-100"
+                      className="h-9 w-9 text-foreground hover:bg-accent"
                       onClick={() => setShowJumpInput(!showJumpInput)}
                       disabled={loading}
                     >
@@ -211,14 +211,14 @@ function EnhancedPagination({
                     </Button>
                     {showJumpInput && (
                       <div className="absolute top-full mt-2 left-1/2 transform -translate-x-1/2 z-10">
-                        <div className="bg-white border border-purple-200 rounded-lg shadow-lg p-3 min-w-[120px]">
+                        <div className="bg-popover border rounded-lg shadow-lg p-3 min-w-[120px]">
                           <div className="flex items-center space-x-2">
                             <Input
                               type="number"
                               placeholder="Seite"
                               value={jumpToPage}
                               onChange={(e) => setJumpToPage(e.target.value)}
-                              className="h-8 w-16 text-center border-purple-200"
+                              className="h-8 w-16 text-center border-border"
                               min={1}
                               max={totalPages}
                               onKeyDown={(e) => {
@@ -232,7 +232,7 @@ function EnhancedPagination({
                             <Button
                               size="sm"
                               onClick={handleJumpToPage}
-                              className="h-8 px-2 bg-purple-600 hover:bg-purple-700"
+                              className="h-8 px-2 bg-primary text-primary-foreground hover:bg-primary/90"
                             >
                               →
                             </Button>
@@ -257,8 +257,8 @@ function EnhancedPagination({
                   disabled={loading}
                   className={`h-9 w-9 transition-all duration-200 ${
                     isActive
-                      ? "bg-gradient-to-r from-purple-600 to-pink-600 text-white shadow-lg scale-105 border-0"
-                      : "border-purple-200 hover:bg-purple-50 hover:border-purple-300 hover:scale-105"
+                      ? "bg-primary text-primary-foreground shadow-lg scale-105 border-0"
+                      : "border-border hover:bg-accent hover:border-primary/50 hover:scale-105"
                   }`}
                 >
                   {pageNum}
@@ -274,7 +274,7 @@ function EnhancedPagination({
               size="sm"
               onClick={() => onPageChange(currentPage + 1)}
               disabled={currentPage === totalPages || loading}
-              className="h-9 px-3 border-purple-200 hover:bg-purple-50 hover:border-purple-300 transition-all duration-200"
+              className="h-9 px-3 border-border hover:bg-accent hover:border-primary/50 transition-all duration-200"
             >
               <span className="hidden sm:inline mr-1">Weiter</span>
               <ChevronRight className="h-4 w-4" />
@@ -285,7 +285,7 @@ function EnhancedPagination({
               size="sm"
               onClick={() => onPageChange(totalPages)}
               disabled={currentPage === totalPages || loading}
-              className="h-9 px-3 border-purple-200 hover:bg-purple-50 hover:border-purple-300 transition-all duration-200"
+              className="h-9 px-3 border-border hover:bg-accent hover:border-primary/50 transition-all duration-200"
             >
               <span className="hidden sm:inline mr-1">Letzte</span>
               <ChevronsRight className="h-4 w-4" />
@@ -301,7 +301,7 @@ function EnhancedPagination({
               size="sm"
               onClick={() => onPageChange(Math.max(1, currentPage - 5))}
               disabled={currentPage <= 5 || loading}
-              className="h-8 px-2 border-purple-200"
+              className="h-8 px-2 border-border"
             >
               -5
             </Button>
@@ -310,11 +310,11 @@ function EnhancedPagination({
               size="sm"
               onClick={() => onPageChange(currentPage - 1)}
               disabled={currentPage === 1 || loading}
-              className="h-8 px-2 border-purple-200"
+              className="h-8 px-2 border-border"
             >
               -1
             </Button>
-            <div className="bg-gradient-to-r from-purple-600 to-pink-600 text-white px-3 py-1 rounded-md text-sm font-medium min-w-[60px] text-center">
+            <div className="bg-primary text-primary-foreground px-3 py-1 rounded-md text-sm font-medium min-w-[60px] text-center">
               {currentPage}
             </div>
             <Button
@@ -322,7 +322,7 @@ function EnhancedPagination({
               size="sm"
               onClick={() => onPageChange(currentPage + 1)}
               disabled={currentPage === totalPages || loading}
-              className="h-8 px-2 border-purple-200"
+              className="h-8 px-2 border-border"
             >
               +1
             </Button>
@@ -331,7 +331,7 @@ function EnhancedPagination({
               size="sm"
               onClick={() => onPageChange(Math.min(totalPages, currentPage + 5))}
               disabled={currentPage >= totalPages - 4 || loading}
-              className="h-8 px-2 border-purple-200"
+              className="h-8 px-2 border-border"
             >
               +5
             </Button>
@@ -339,9 +339,9 @@ function EnhancedPagination({
         </div>
 
         {/* Progress Bar */}
-        <div className="w-full bg-purple-100 rounded-full h-2 overflow-hidden">
+        <div className="w-full bg-secondary rounded-full h-2 overflow-hidden">
           <div
-            className="bg-gradient-to-r from-purple-500 to-pink-500 h-full rounded-full transition-all duration-500 ease-out"
+            className="bg-primary h-full rounded-full transition-all duration-500 ease-out"
             style={{ width: `${(currentPage / totalPages) * 100}%` }}
           />
         </div>
@@ -771,8 +771,8 @@ function MangaCollectionContent() {
 
           {/* Error Alert */}
           {error && (
-            <Alert className="border-red-400 bg-red-50 shadow-lg">
-              <AlertDescription className="font-medium text-red-700">
+            <Alert className="border-destructive bg-destructive/10 shadow-lg">
+              <AlertDescription className="font-medium text-destructive">
                 {error}
                 <Button variant="outline" size="sm" onClick={() => fetchMangas()} className="ml-2">
                   <RefreshCw className="h-4 w-4 mr-1" />
@@ -785,7 +785,7 @@ function MangaCollectionContent() {
           {/* Import Status Alert */}
           {importStatus.type && (
             <Alert
-              className={`${importStatus.type === "success" ? "border-green-400 bg-green-50" : "border-red-400 bg-red-50"} shadow-lg`}
+              className={`${importStatus.type === "success" ? "border-brand-cyan bg-brand-cyan/10" : "border-destructive bg-destructive/10"} shadow-lg`}
             >
               <AlertDescription className="font-medium">{importStatus.message}</AlertDescription>
             </Alert>
@@ -827,7 +827,7 @@ function MangaCollectionContent() {
                     setSearchTerm(e.target.value)
                     updateURL(filters, e.target.value, sortConfig, 1)
                   }}
-                  className="pl-10 border-2 border-purple-200 focus:border-purple-400 shadow-sm"
+                  className="pl-10 border-2 focus:border-primary shadow-sm"
                   disabled={loading}
                 />
               </div>
@@ -836,23 +836,23 @@ function MangaCollectionContent() {
                 <Button
                   variant="outline"
                   onClick={() => setShowFilters(!showFilters)}
-                  className="border-purple-200 hover:bg-purple-50 w-full"
+                  className="border-border hover:bg-accent w-full"
                   disabled={loading}
                 >
                   <Filter className="h-4 w-4 mr-2" />
-                  Filter {activeFiltersCount > 0 && <Badge className="ml-2 bg-purple-500">{activeFiltersCount}</Badge>}
+                  Filter {activeFiltersCount > 0 && <Badge className="ml-2 bg-primary text-primary-foreground">{activeFiltersCount}</Badge>}
                 </Button>
 
                 <Dialog open={isImportDialogOpen} onOpenChange={setIsImportDialogOpen}>
                   <DialogTrigger asChild>
-                    <Button variant="outline" className="border-blue-200 hover:bg-blue-50 w-full" disabled={loading}>
+                    <Button variant="outline" className="border-border hover:bg-accent w-full" disabled={loading}>
                       <Upload className="h-4 w-4 mr-2" />
                       <span>Excel Import</span>
                     </Button>
                   </DialogTrigger>
                   <DialogContent className="max-w-md">
                     <DialogHeader>
-                      <DialogTitle className="text-purple-700">Excel-Datei importieren 📊</DialogTitle>
+                      <DialogTitle className="text-foreground">Excel-Datei importieren 📊</DialogTitle>
                     </DialogHeader>
                     <div className="space-y-4">
                       <div className="text-sm text-muted-foreground">
@@ -877,7 +877,7 @@ function MangaCollectionContent() {
                           ref={fileInputRef}
                           accept=".xlsx,.xls"
                           onChange={handleExcelImport}
-                          className="border-purple-200"
+                          className="border-border"
                           disabled={loading}
                         />
                       </div>
@@ -888,14 +888,14 @@ function MangaCollectionContent() {
                 {/* ISBN Scanner Dialog */}
                 <Dialog open={isScannerOpen} onOpenChange={setIsScannerOpen}>
                   <DialogTrigger asChild>
-                    <Button variant="outline" className="border-green-200 hover:bg-green-50 w-full" disabled={loading}>
+                    <Button variant="outline" className="border-border hover:bg-accent w-full" disabled={loading}>
                       <Barcode className="h-4 w-4 mr-2" />
                       <span>ISBN Scannen</span>
                     </Button>
                   </DialogTrigger>
                   <DialogContent className="max-w-md max-h-[80vh] overflow-y-auto">
                     <DialogHeader>
-                      <DialogTitle className="text-purple-700">ISBN scannen 📷</DialogTitle>
+                      <DialogTitle className="text-foreground">ISBN scannen 📷</DialogTitle>
                     </DialogHeader>
                     <SimpleISBNScanner onScan={handleISBNScan} onClose={() => setIsScannerOpen(false)} />
                   </DialogContent>
@@ -904,7 +904,7 @@ function MangaCollectionContent() {
                 <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
                   <DialogTrigger asChild>
                     <Button
-                      className="bg-gradient-to-r from-pink-500 to-purple-500 hover:from-pink-600 hover:to-purple-600 shadow-lg w-full"
+                      className="bg-brand-coral text-background hover:bg-brand-coral/90 shadow-lg w-full"
                       disabled={loading}
                     >
                       <Plus className="h-4 w-4 mr-2" />
@@ -913,7 +913,7 @@ function MangaCollectionContent() {
                   </DialogTrigger>
                   <DialogContent className="max-w-md max-h-[80vh] overflow-y-auto">
                     <DialogHeader>
-                      <DialogTitle className="text-purple-700">Neues Manga hinzufügen ✨</DialogTitle>
+                      <DialogTitle className="text-foreground">Neues Manga hinzufügen ✨</DialogTitle>
                     </DialogHeader>
                     <div className="space-y-4">
                       <div className="space-y-2">
@@ -923,7 +923,7 @@ function MangaCollectionContent() {
                           value={newManga.titel}
                           onChange={(e) => setNewManga({ ...newManga, titel: e.target.value })}
                           placeholder="Manga-Titel"
-                          className="border-purple-200 focus:border-purple-400"
+                          className="focus:border-primary"
                           disabled={loading}
                         />
                       </div>
@@ -936,7 +936,7 @@ function MangaCollectionContent() {
                             value={newManga.band}
                             onChange={(e) => setNewManga({ ...newManga, band: e.target.value })}
                             placeholder="Band-Nr."
-                            className="border-purple-200 focus:border-purple-400"
+                            className="focus:border-primary"
                             disabled={loading}
                           />
                         </div>
@@ -948,7 +948,7 @@ function MangaCollectionContent() {
                             value={newManga.sprache}
                             onChange={(e) => setNewManga({ ...newManga, sprache: e.target.value })}
                             placeholder="Deutsch"
-                            className="border-purple-200 focus:border-purple-400"
+                            className="focus:border-primary"
                             disabled={loading}
                           />
                         </div>
@@ -961,7 +961,7 @@ function MangaCollectionContent() {
                           value={newManga.genre}
                           onChange={(e) => setNewManga({ ...newManga, genre: e.target.value })}
                           placeholder="z.B. Shonen, Action"
-                          className="border-purple-200 focus:border-purple-400"
+                          className="focus:border-primary"
                           disabled={loading}
                         />
                       </div>
@@ -973,7 +973,7 @@ function MangaCollectionContent() {
                           value={newManga.autor}
                           onChange={(e) => setNewManga({ ...newManga, autor: e.target.value })}
                           placeholder="Autor-Name"
-                          className="border-purple-200 focus:border-purple-400"
+                          className="focus:border-primary"
                           disabled={loading}
                         />
                       </div>
@@ -985,7 +985,7 @@ function MangaCollectionContent() {
                           value={newManga.verlag}
                           onChange={(e) => setNewManga({ ...newManga, verlag: e.target.value })}
                           placeholder="Verlag"
-                          className="border-purple-200 focus:border-purple-400"
+                          className="focus:border-primary"
                           disabled={loading}
                         />
                       </div>
@@ -999,7 +999,7 @@ function MangaCollectionContent() {
                               value={newManga.isbn}
                               onChange={(e) => setNewManga({ ...newManga, isbn: e.target.value })}
                               placeholder="ISBN-Nummer"
-                              className="border-purple-200 focus:border-purple-400"
+                              className="focus:border-primary"
                               disabled={loading || isLoadingISBN}
                             />
                           </div>
@@ -1045,7 +1045,7 @@ function MangaCollectionContent() {
                           value={newManga.coverImage}
                           onChange={(e) => setNewManga({ ...newManga, coverImage: e.target.value })}
                           placeholder="URL zum Cover-Bild"
-                          className="border-purple-200 focus:border-purple-400"
+                          className="focus:border-primary"
                           disabled={loading}
                         />
                         {newManga.coverImage && newManga.coverImage !== "/placeholder.svg?height=120&width=80" && (
@@ -1053,7 +1053,7 @@ function MangaCollectionContent() {
                             <img
                               src={newManga.coverImage || "/placeholder.svg"}
                               alt="Cover Vorschau"
-                              className="h-40 object-contain rounded-md border border-purple-200"
+                              className="h-40 object-contain rounded-md border border-border"
                               onError={(e) => {
                                 const target = e.target as HTMLImageElement
                                 target.src = "/placeholder.svg?height=120&width=80"
@@ -1097,7 +1097,7 @@ function MangaCollectionContent() {
 
                       <Button
                         onClick={handleAddManga}
-                        className="w-full bg-gradient-to-r from-pink-500 to-purple-500 hover:from-pink-600 hover:to-purple-600"
+                        className="w-full bg-brand-coral text-background hover:bg-brand-coral/90"
                         disabled={loading}
                       >
                         {loading ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : null}
@@ -1114,7 +1114,7 @@ function MangaCollectionContent() {
                     <Button
                       variant="destructive"
                       size="sm"
-                      className="bg-red-500 hover:bg-red-600 w-full"
+                      className="bg-destructive text-destructive-foreground hover:bg-destructive/90 w-full"
                       disabled={loading}
                     >
                       <Trash2 className="h-4 w-4 mr-2" />
@@ -1131,7 +1131,7 @@ function MangaCollectionContent() {
                     </AlertDialogHeader>
                     <AlertDialogFooter>
                       <AlertDialogCancel>Abbrechen</AlertDialogCancel>
-                      <AlertDialogAction onClick={handleBulkDelete} className="bg-red-500 hover:bg-red-600">
+                      <AlertDialogAction onClick={handleBulkDelete} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
                         {loading ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : null}
                         Löschen
                       </AlertDialogAction>
@@ -1143,10 +1143,10 @@ function MangaCollectionContent() {
 
             {/* Filter Panel */}
             {showFilters && (
-              <Card className="border-purple-200 shadow-lg">
+              <Card className="border-border shadow-lg">
                 <CardHeader className="pb-3">
                   <div className="flex items-center justify-between">
-                    <CardTitle className="text-purple-700 flex items-center gap-2">
+                    <CardTitle className="text-foreground flex items-center gap-2">
                       <Filter className="h-5 w-5" />
                       Filter & Sortierung
                     </CardTitle>
@@ -1155,7 +1155,7 @@ function MangaCollectionContent() {
                         variant="outline"
                         size="sm"
                         onClick={clearFilters}
-                        className="text-purple-600"
+                        className="text-foreground"
                         disabled={loading}
                       >
                         <X className="h-4 w-4 mr-1" />
@@ -1177,7 +1177,7 @@ function MangaCollectionContent() {
                         }}
                         disabled={loading}
                       >
-                        <SelectTrigger className="border-purple-200">
+                        <SelectTrigger className="border-border">
                           <SelectValue placeholder="Alle Genres" />
                         </SelectTrigger>
                         <SelectContent>
@@ -1202,7 +1202,7 @@ function MangaCollectionContent() {
                         }}
                         disabled={loading}
                       >
-                        <SelectTrigger className="border-purple-200">
+                        <SelectTrigger className="border-border">
                           <SelectValue placeholder="Alle Autoren" />
                         </SelectTrigger>
                         <SelectContent>
@@ -1227,7 +1227,7 @@ function MangaCollectionContent() {
                         }}
                         disabled={loading}
                       >
-                        <SelectTrigger className="border-purple-200">
+                        <SelectTrigger className="border-border">
                           <SelectValue placeholder="Alle Verlage" />
                         </SelectTrigger>
                         <SelectContent>
@@ -1252,7 +1252,7 @@ function MangaCollectionContent() {
                         }}
                         disabled={loading}
                       >
-                        <SelectTrigger className="border-purple-200">
+                        <SelectTrigger className="border-border">
                           <SelectValue placeholder="Alle Sprachen" />
                         </SelectTrigger>
                         <SelectContent>
@@ -1277,7 +1277,7 @@ function MangaCollectionContent() {
                         }}
                         disabled={loading}
                       >
-                        <SelectTrigger className="border-purple-200">
+                        <SelectTrigger className="border-border">
                           <SelectValue placeholder="Alle Bände" />
                         </SelectTrigger>
                         <SelectContent>
@@ -1302,7 +1302,7 @@ function MangaCollectionContent() {
                         }}
                         disabled={loading}
                       >
-                        <SelectTrigger className="border-purple-200">
+                        <SelectTrigger className="border-border">
                           <SelectValue placeholder="Alle Status" />
                         </SelectTrigger>
                         <SelectContent>
@@ -1317,17 +1317,17 @@ function MangaCollectionContent() {
                   </div>
 
                   {activeFiltersCount > 0 && (
-                    <div className="flex flex-wrap gap-2 pt-2 border-t border-purple-100">
+                    <div className="flex flex-wrap gap-2 pt-2 border-t border-border">
                       <span className="text-sm text-muted-foreground">Aktive Filter:</span>
                       {searchTerm && (
-                        <Badge variant="secondary" className="bg-purple-100 text-purple-700">
+                        <Badge variant="secondary" className="bg-secondary text-foreground">
                           Suche: "{searchTerm}"
                         </Badge>
                       )}
                       {Object.entries(filters).map(([key, value]) => {
                         if (!value) return null
                         return (
-                          <Badge key={key} variant="secondary" className="bg-purple-100 text-purple-700">
+                          <Badge key={key} variant="secondary" className="bg-secondary text-foreground">
                             {key}: {value}
                           </Badge>
                         )
