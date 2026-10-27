@@ -22,6 +22,12 @@ class BrandColors {
   static const surfaceHigh = Color(0xFF1A2235); // Platzhalter, erhöhte Flächen
 }
 
+/// Schriften aus docs/BRAND_SETUP.md, gebündelt in assets/fonts/
+class BrandFonts {
+  static const body = 'Inter';
+  static const display = 'SpaceGrotesk';
+}
+
 class AppTheme {
   static ThemeData get dark {
     const scheme = ColorScheme(
@@ -36,6 +42,7 @@ class AppTheme {
         onError: BrandColors.deepNavy,
         surface: BrandColors.deepNavy,
         onSurface: BrandColors.warmWhite,
+        onSurfaceVariant: BrandColors.muted,
         surfaceContainerLow: BrandColors.graphite,
         surfaceContainer: BrandColors.graphite,
         surfaceContainerHigh: BrandColors.surfaceHigh,
@@ -44,6 +51,7 @@ class AppTheme {
     return ThemeData(
         colorScheme: scheme,
         useMaterial3: true,
+        textTheme: _textTheme,
         scaffoldBackgroundColor: BrandColors.deepNavy,
         cardTheme: CardThemeData(
           color: BrandColors.graphite,
@@ -59,8 +67,29 @@ class AppTheme {
           elevation: 0,
         ),
         snackBarTheme: const SnackBarThemeData(
-          contentTextStyle: TextStyle(color: BrandColors.deepNavy),
+          contentTextStyle: TextStyle(
+              fontFamily: BrandFonts.body, color: BrandColors.deepNavy),
           actionTextColor: BrandColors.deepNavy,
         ));
+  }
+
+  // Inter für alles, Space Grotesk für Überschriften und AppBar-Titel.
+  // Nicht über ThemeData.fontFamily: das würde Space Grotesk wieder
+  // mit Inter überschreiben.
+  static TextTheme get _textTheme {
+    final base = Typography.material2021()
+        .white
+        .apply(fontFamily: BrandFonts.body);
+    TextStyle? display(TextStyle? s) =>
+        s?.copyWith(fontFamily: BrandFonts.display);
+    return base.copyWith(
+      displayLarge: display(base.displayLarge),
+      displayMedium: display(base.displayMedium),
+      displaySmall: display(base.displaySmall),
+      headlineLarge: display(base.headlineLarge),
+      headlineMedium: display(base.headlineMedium),
+      headlineSmall: display(base.headlineSmall),
+      titleLarge: display(base.titleLarge),
+    );
   }
 }
