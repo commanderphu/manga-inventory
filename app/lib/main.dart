@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'theme/app_theme.dart';
 import 'firebase_options.dart';
 import 'screens/manga_list_screen.dart';
 import 'screens/login_screen.dart';
@@ -41,33 +42,8 @@ class MangaApp extends StatelessWidget {
     return MaterialApp(
       title: 'Manga Sammlung',
       debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(
-          seedColor: const Color(0xFFE91E63), // Pink
-          brightness: Brightness.light,
-        ),
-        useMaterial3: true,
-        cardTheme: CardThemeData(
-          elevation: 2,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
-          ),
-        ),
-      ),
-      darkTheme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(
-          seedColor: const Color(0xFFE91E63), // Pink
-          brightness: Brightness.dark,
-        ),
-        useMaterial3: true,
-        cardTheme: CardThemeData(
-          elevation: 2,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
-          ),
-        ),
-      ),
-      themeMode: ThemeMode.system,
+      theme: AppTheme.dark,
+      themeMode: ThemeMode.dark,
       home: const AuthWrapper(),
       routes: {
         '/login': (context) => const LoginScreen(),
