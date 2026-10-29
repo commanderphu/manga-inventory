@@ -131,10 +131,6 @@ class _MangaListScreenState extends ConsumerState<MangaListScreen> {
             onPressed: () => _showFilterSheet(context),
           ),
           IconButton(
-            icon: const Icon(Icons.refresh),
-            onPressed: () => ref.refresh(mangaListProvider),
-          ),
-          IconButton(
             icon: const Icon(Icons.settings),
             onPressed: () {
               Navigator.of(context).pushNamed('/settings');
