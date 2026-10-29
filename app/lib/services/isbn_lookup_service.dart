@@ -2,7 +2,8 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 
 class IsbnLookupService {
-  static const String googleBooksApi = 'https://www.googleapis.com/books/v1/volumes';
+  static const String googleBooksApi =
+      'https://www.googleapis.com/books/v1/volumes';
   static const String openLibraryApi = 'https://openlibrary.org/api/books';
 
   /// Lookup book information by ISBN with fallback to multiple sources
@@ -78,8 +79,10 @@ class IsbnLookupService {
   Future<String?> _lookupOpenLibraryCover(String isbn) async {
     try {
       // Open Library has direct cover API
-      final coverUrl = 'https://covers.openlibrary.org/b/isbn/$isbn-L.jpg';
-
+      // Ohne default=false liefert Open Library bei unbekannter ISBN ein
+      // leeres 1×1-GIF mit Status 200 statt eines 404.
+      final coverUrl =
+          'https://covers.openlibrary.org/b/isbn/$isbn-L.jpg?default=false';
       // Check if cover exists
       final response = await http.head(Uri.parse(coverUrl));
       if (response.statusCode == 200) {
@@ -95,7 +98,8 @@ class IsbnLookupService {
   /// Lookup from Open Library API
   Future<BookInfo?> _lookupOpenLibrary(String isbn) async {
     try {
-      final uri = Uri.parse('$openLibraryApi?bibkeys=ISBN:$isbn&format=json&jscmd=data');
+      final uri = Uri.parse(
+          '$openLibraryApi?bibkeys=ISBN:$isbn&format=json&jscmd=data');
       final response = await http.get(uri);
 
       if (response.statusCode == 200) {
@@ -107,17 +111,25 @@ class IsbnLookupService {
 
           return BookInfo(
             title: bookData['title'] ?? '',
-            authors: bookData['authors'] != null && (bookData['authors'] as List).isNotEmpty
+            authors: bookData['authors'] != null &&
+                    (bookData['authors'] as List).isNotEmpty
                 ? (bookData['authors'] as List).map((a) => a['name']).join(', ')
                 : null,
-            publisher: bookData['publishers'] != null && (bookData['publishers'] as List).isNotEmpty
+            publisher: bookData['publishers'] != null &&
+                    (bookData['publishers'] as List).isNotEmpty
                 ? (bookData['publishers'] as List)[0]['name']
                 : null,
-            language: null, // Open Library doesn't provide language in this format
-            categories: bookData['subjects'] != null && (bookData['subjects'] as List).isNotEmpty
-                ? (bookData['subjects'] as List).map((s) => s['name']).join(', ')
+            language:
+                null, // Open Library doesn't provide language in this format
+            categories: bookData['subjects'] != null &&
+                    (bookData['subjects'] as List).isNotEmpty
+                ? (bookData['subjects'] as List)
+                    .map((s) => s['name'])
+                    .join(', ')
                 : null,
-            coverImage: bookData['cover']?['large'] ?? bookData['cover']?['medium'] ?? bookData['cover']?['small'],
+            coverImage: bookData['cover']?['large'] ??
+                bookData['cover']?['medium'] ??
+                bookData['cover']?['small'],
             description: null,
           );
         }
@@ -135,7 +147,9 @@ class IsbnLookupService {
 
     // Try to get the highest quality image available
     if (imageLinks['extraLarge'] != null) {
-      return imageLinks['extraLarge'].toString().replaceAll('http://', 'https://');
+      return imageLinks['extraLarge']
+          .toString()
+          .replaceAll('http://', 'https://');
     }
     if (imageLinks['large'] != null) {
       return imageLinks['large'].toString().replaceAll('http://', 'https://');
@@ -147,10 +161,14 @@ class IsbnLookupService {
       return imageLinks['small'].toString().replaceAll('http://', 'https://');
     }
     if (imageLinks['thumbnail'] != null) {
-      return imageLinks['thumbnail'].toString().replaceAll('http://', 'https://');
+      return imageLinks['thumbnail']
+          .toString()
+          .replaceAll('http://', 'https://');
     }
     if (imageLinks['smallThumbnail'] != null) {
-      return imageLinks['smallThumbnail'].toString().replaceAll('http://', 'https://');
+      return imageLinks['smallThumbnail']
+          .toString()
+          .replaceAll('http://', 'https://');
     }
 
     return null;

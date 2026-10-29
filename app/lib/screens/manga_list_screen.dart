@@ -2,7 +2,6 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../models/manga.dart';
 import '../providers/manga_providers.dart';
 import '../widgets/manga_list_tile.dart';
 import '../widgets/stat_card.dart';
@@ -101,7 +100,7 @@ class _MangaListScreenState extends ConsumerState<MangaListScreen> {
                   });
                 },
               )
-            : const Text('📚 Manga Sammlung'),
+            : const Text('Manga Inventory'),
         actions: [
           if (_isSearching)
             IconButton(

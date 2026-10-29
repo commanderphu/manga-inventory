@@ -84,10 +84,14 @@ class StatCard extends StatelessWidget {
                     color: color,
                   ),
             ),
-            Text(
-              title,
-              style: Theme.of(context).textTheme.bodySmall,
-              textAlign: TextAlign.center,
+            FittedBox(
+              fit: BoxFit.scaleDown,
+              child: Text(
+                title,
+                style: Theme.of(context).textTheme.bodySmall,
+                maxLines: 1,
+                softWrap: false,
+              ),
             ),
           ],
         ),
