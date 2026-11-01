@@ -2,13 +2,13 @@ require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const helmet = require('helmet');
-const morgan = require('morgan');
 const rateLimit = require('express-rate-limit');
 const swaggerUi = require('swagger-ui-express');
 const swaggerSpec = require('./swagger');
 
 const authenticate = require('./middleware/auth');
 const { optionalAuth } = require('./middleware/authJwt');
+const { requestLog } = require('./middleware/requestLog');
 const mangaRoutes = require('./routes/manga');
 const authRoutes = require('./routes/auth');
 
@@ -45,11 +45,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // Logging
-if (process.env.NODE_ENV !== 'production') {
-  app.use(morgan('dev'));
-} else {
-  app.use(morgan('combined'));
-}
+app.use(requestLog(process.env.NODE_ENV === 'production'));
 
 // Rate limiting
 const limiter = rateLimit({
