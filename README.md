@@ -19,6 +19,8 @@ Manga Inventory ist ein Multi-Plattform System zur Verwaltung deiner Manga-Samml
 
 > Die Idee entstand aus dem Wunsch, eine analoge Excel-Manga-Liste digital, durchsuchbar und mobil zugänglich zu machen – inklusive Cover-Anzeige, ISBN-Scanner und Statistiken.
 
+> **Wohin es geht:** Manga Inventory wird zum Selbsthosten ausgebaut, ähnlich wie paperless-ngx oder Home Assistant: eigene Instanz im Homelab oder auf einem VPS, die App verbindet sich damit und funktioniert auch offline. Details in der [Roadmap](docs/ROADMAP.md).
+
 ---
 
 ## 🏗️ Architektur
