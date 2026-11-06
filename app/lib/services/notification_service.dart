@@ -3,9 +3,10 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/foundation.dart';
+import '../config/api_config.dart';
 
 class NotificationService {
-  static const String baseUrl = 'https://manga-api.intern.phudevelopement.xyz';
+  static final String baseUrl = ApiConfig.baseUrl;
 
   final FirebaseMessaging _messaging = FirebaseMessaging.instance;
   final FlutterLocalNotificationsPlugin _localNotifications =
@@ -28,7 +29,8 @@ class NotificationService {
       if (kDebugMode) {
         print('User granted notification permission');
       }
-    } else if (settings.authorizationStatus == AuthorizationStatus.provisional) {
+    } else if (settings.authorizationStatus ==
+        AuthorizationStatus.provisional) {
       if (kDebugMode) {
         print('User granted provisional notification permission');
       }
@@ -39,7 +41,8 @@ class NotificationService {
     }
 
     // Initialize local notifications
-    const androidSettings = AndroidInitializationSettings('@mipmap/ic_launcher');
+    const androidSettings =
+        AndroidInitializationSettings('@mipmap/ic_launcher');
     const iosSettings = DarwinInitializationSettings();
     const initSettings = InitializationSettings(
       android: androidSettings,
@@ -176,7 +179,8 @@ class NotificationService {
           android: AndroidNotificationDetails(
             'manga_activity_channel',
             'Manga-Aktivitäten',
-            channelDescription: 'Benachrichtigungen über Änderungen in der Manga-Sammlung',
+            channelDescription:
+                'Benachrichtigungen über Änderungen in der Manga-Sammlung',
             importance: Importance.high,
             priority: Priority.high,
             icon: '@mipmap/ic_launcher',

@@ -1,10 +1,11 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import '../models/manga.dart';
+import '../config/api_config.dart';
 
 class MangaApiService {
-  static const String baseUrl = 'https://manga-api.phudevelopement.xyz';
-  static const String apiKey = 'NTfvGXfVZf3MEgyr56qQbk5Y3Zxfj6A/kI68GnD97hs=';
+  static final String baseUrl = ApiConfig.baseUrl;
+  static const String apiKey = ApiConfig.apiKey;
 
   final String? authToken;
 
@@ -46,7 +47,8 @@ class MangaApiService {
       if (newbuy != null) 'newbuy': newbuy.toString(),
     };
 
-    final uri = Uri.parse('$baseUrl/api/manga').replace(queryParameters: queryParams);
+    final uri =
+        Uri.parse('$baseUrl/api/manga').replace(queryParameters: queryParams);
 
     final response = await http.get(uri, headers: _headers);
 

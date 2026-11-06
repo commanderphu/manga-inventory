@@ -22,6 +22,8 @@ DB_ARGS       = -h localhost -U "$(call env_var,DB_USER)" -d "$(call env_var,DB_
 # Lokale Ports: Frontend auf 3000 (Next-Standard), API auf 4000
 API_PORT      ?= 4000
 FRONTEND_PORT ?= 3000
+# Adresse, unter der das Handy die lokale Dev-API erreicht (dieser Rechner im LAN)
+DEV_HOST      ?= 192.168.178.100
 DEV_API_KEY   ?= dev-api-key
 
 # Überschreibt api/.env — dotenv lässt bereits gesetzte Variablen in Ruhe
@@ -33,6 +35,9 @@ API_DEV_ENV := \
 
 # Überschreibt frontend/.env.local, die sonst auf die Produktion zeigt
 FRONTEND_DEV_ENV := API_URL=http://localhost:$(API_PORT) API_KEY=$(DEV_API_KEY)
+
+# Flutter-App gegen die lokale Dev-API (app/lib/config/api_config.dart)
+APP_DEV_DEFINES := --dart-define=API_URL=http://$(DEV_HOST):$(API_PORT) --dart-define=API_KEY=$(DEV_API_KEY)
 
 .PHONY: help
 help: ## Diese Übersicht
@@ -51,7 +56,7 @@ install-app: ## Flutter-Abhängigkeiten installieren
 
 ##@ Entwicklung
 
-.PHONY: dev api frontend app
+.PHONY: dev api frontend app app-prod
 dev: db-check ## API und Frontend zusammen starten (gegen central_postgres)
 	@echo "API:      http://localhost:$(API_PORT)  (Swagger: /docs)"
 	@echo "Frontend: http://localhost:$(FRONTEND_PORT)"
@@ -63,8 +68,13 @@ api: ## Nur die API mit Hot-Reload (nodemon) gegen central_postgres
 frontend: ## Nur das Frontend (Next.js) gegen die lokale API
 	cd frontend && $(FRONTEND_DEV_ENV) pnpm dev --port $(FRONTEND_PORT)
 
-app: ## Flutter-App starten (Achtung: URLs sind fest auf die Produktion verdrahtet)
-	cd app && flutter run
+app: ## Flutter-App gegen die lokale Dev-API starten (vorher make dev oder make api)
+	@echo "App → http://$(DEV_HOST):$(API_PORT)"
+	cd app && flutter run $(APP_DEV_DEFINES) $(FLUTTER_ARGS)
+
+app-prod: ## Flutter-App gegen die Produktion starten
+	@echo "App → $(PROD_URL)"
+	cd app && flutter run $(FLUTTER_ARGS)
 
 ##@ Datenbank (manga_inventory auf central_postgres)
 
