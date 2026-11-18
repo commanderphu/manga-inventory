@@ -79,7 +79,12 @@ jobs:
           # /health braucht weder Datenbank noch API-Key — deshalb laesst sich
           # der Start ohne Testumgebung pruefen. Faengt kaputte Builds ab, bevor
           # :latest darauf zeigt und die DMZ sie sich zieht.
-          docker run -d --name smoke -p 3000:3000 -e NODE_ENV=production "$IMAGE:latest"
+          # Die Pflichtvariablen (#11) bekommen Dummy-Werte: Der Pool verbindet
+          # sich erst bei der ersten Abfrage, /health kommt ohne DB aus.
+          docker run -d --name smoke -p 3000:3000 -e NODE_ENV=production \
+            -e DB_HOST=smoke -e DB_NAME=smoke -e DB_USER=smoke -e DB_PASSWORD=smoke \
+            -e API_KEY=smoke -e JWT_SECRET=smoke \
+            "$IMAGE:latest"
           for i in $(seq 1 20); do
             if curl -fsS http://localhost:3000/health; then
               echo; echo "Health-Check ok nach ${i}s"
