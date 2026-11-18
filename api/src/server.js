@@ -1,4 +1,6 @@
-require('dotenv').config();
+const { requireEnv } = require('../config/env');
+requireEnv(['API_KEY', 'JWT_SECRET']);
+
 const express = require('express');
 const cors = require('cors');
 const helmet = require('helmet');

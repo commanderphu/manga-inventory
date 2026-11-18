@@ -15,7 +15,7 @@ Host: central_postgres (Docker Container)
 Port: 5432
 Database: manga_inventory
 User: manga_admin
-Password: manga_secure_2025
+Password: <DB_PASSWORD>
 ```
 
 ### Docker-Zugriff
@@ -31,12 +31,12 @@ docker exec -it central_postgres psql -U admin -d manga_inventory
 ### Verbindungs-URL
 
 ```
-postgresql://manga_admin:manga_secure_2025@central_postgres:5432/manga_inventory
+postgresql://manga_admin:<DB_PASSWORD>@central_postgres:5432/manga_inventory
 ```
 
 Für externe Verbindung (falls exposed):
 ```
-postgresql://manga_admin:manga_secure_2025@localhost:5432/manga_inventory
+postgresql://manga_admin:<DB_PASSWORD>@localhost:5432/manga_inventory
 ```
 
 ## Datenbankschema
@@ -109,7 +109,7 @@ final connection = PostgreSQLConnection(
   5432,
   'manga_inventory',
   username: 'manga_admin',
-  password: 'manga_secure_2025',
+  password: '<DB_PASSWORD>',
 );
 
 await connection.open();
@@ -228,7 +228,7 @@ Zugriff über:
 
 Um Manga-Datenbank zu sehen, verbinde mit:
 ```
-postgres://manga_admin:manga_secure_2025@postgres:5432/manga_inventory?sslmode=disable
+postgres://manga_admin:<DB_PASSWORD>@postgres:5432/manga_inventory?sslmode=disable
 ```
 
 ## Nächste Schritte

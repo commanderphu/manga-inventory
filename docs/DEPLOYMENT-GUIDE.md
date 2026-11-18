@@ -323,7 +323,7 @@ const pool = new Pool({
   port: 5432,
   database: 'manga_inventory',
   user: 'manga_admin',
-  password: 'manga_secure_2025'
+  password: '<DB_PASSWORD>'
 });
 pool.query('SELECT COUNT(*) FROM manga').then(r => console.log(r.rows[0]));
 "

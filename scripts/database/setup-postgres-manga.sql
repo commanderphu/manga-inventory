@@ -3,8 +3,8 @@
 -- Created: 2025-12-31
 -- ======================================================
 
--- Create dedicated user for manga app
-CREATE USER manga_admin WITH PASSWORD 'manga_secure_2025';
+-- Create dedicated user for manga app (<DB_PASSWORD> vorher durch ein eigenes Passwort ersetzen)
+CREATE USER manga_admin WITH PASSWORD '<DB_PASSWORD>';
 
 -- Create manga database
 CREATE DATABASE manga_inventory OWNER manga_admin;

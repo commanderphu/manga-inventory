@@ -1,11 +1,14 @@
 const { Pool } = require('pg');
+const { requireEnv } = require('./env');
+
+requireEnv(['DB_HOST', 'DB_NAME', 'DB_USER', 'DB_PASSWORD']);
 
 const pool = new Pool({
-  host: process.env.DB_HOST || 'central_postgres',
-  port: process.env.DB_PORT || 5432,
-  database: process.env.DB_NAME || 'manga_inventory',
-  user: process.env.DB_USER || 'manga_admin',
-  password: process.env.DB_PASSWORD || 'manga_secure_2025',
+  host: process.env.DB_HOST,
+  port: parseInt(process.env.DB_PORT, 10) || 5432,
+  database: process.env.DB_NAME,
+  user: process.env.DB_USER,
+  password: process.env.DB_PASSWORD,
   max: 20,
   idleTimeoutMillis: 30000,
   connectionTimeoutMillis: 2000,

@@ -1,15 +1,7 @@
 #!/usr/bin/env node
 
 const bcrypt = require('bcrypt');
-const { Pool } = require('pg');
-
-const pool = new Pool({
-  host: process.env.DB_HOST || 'central_postgres',
-  port: process.env.DB_PORT || 5432,
-  database: process.env.DB_NAME || 'manga_inventory',
-  user: process.env.DB_USER || 'manga_admin',
-  password: process.env.DB_PASSWORD,
-});
+const pool = require('./config/database');
 
 async function createUsers() {
   console.log('Creating user accounts...\n');
