@@ -255,6 +255,8 @@ Standardmäßig ist die Registrierung geschlossen (`REGISTRATION_MODE=closed`). 
 npm run users -- list
 npm run users -- add anna@example.org "Anna"
 npm run users -- reset-password anna@example.org
+npm run users -- disable anna@example.org   # Login und bestehende Sitzungen sperren
+npm run users -- enable anna@example.org
 
 # im Container
 docker exec <container> npm run users -- list

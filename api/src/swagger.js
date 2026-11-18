@@ -267,6 +267,7 @@ const options = {
           responses: {
             200: { description: 'Login erfolgreich + JWT Token' },
             401: { description: 'Falsche Zugangsdaten' },
+            403: { description: 'Konto deaktiviert (code: ACCOUNT_DISABLED)' },
           },
         },
       },

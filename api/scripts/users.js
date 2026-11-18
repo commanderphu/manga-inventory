@@ -5,6 +5,8 @@
  *   npm run users -- list
  *   npm run users -- add <email> <name>
  *   npm run users -- reset-password <email>
+ *   npm run users -- disable <email>
+ *   npm run users -- enable <email>
  *
  * Im Container: docker exec <container> npm run users -- list
  *
@@ -18,7 +20,9 @@ const pool = require('../config/database');
 const USAGE = `Verwendung:
   npm run users -- list
   npm run users -- add <email> <name>
-  npm run users -- reset-password <email>`;
+  npm run users -- reset-password <email>
+  npm run users -- disable <email>
+  npm run users -- enable <email>`;
 
 function generatePassword() {
   // 18 Bytes → 24 Zeichen base64url, gut abtippbar und ohne Sonderzeichen-Ärger
@@ -27,14 +31,17 @@ function generatePassword() {
 
 async function list() {
   const { rows } = await pool.query(
-    'SELECT email, name, created_at FROM users ORDER BY created_at'
+    'SELECT email, name, created_at, disabled_at FROM users ORDER BY created_at'
   );
   if (rows.length === 0) {
     console.log('Noch keine Konten.');
     return;
   }
   for (const u of rows) {
-    console.log(`${u.email.padEnd(36)} ${u.name.padEnd(24)} seit ${u.created_at.toISOString().slice(0, 10)}`);
+    const status = u.disabled_at
+      ? `deaktiviert seit ${u.disabled_at.toISOString().slice(0, 10)}`
+      : `aktiv seit ${u.created_at.toISOString().slice(0, 10)}`;
+    console.log(`${u.email.padEnd(36)} ${u.name.padEnd(24)} ${status}`);
   }
 }
 
@@ -73,9 +80,44 @@ async function resetPassword(email) {
   console.log('  (wird nur jetzt angezeigt)');
 }
 
+async function disable(email) {
+  if (!email) throw new UsageError();
+  const client = await pool.connect();
+  try {
+    await client.query('BEGIN');
+    const { rows } = await client.query(
+      `UPDATE users SET disabled_at = COALESCE(disabled_at, NOW()), updated_at = NOW()
+       WHERE lower(email) = lower($1) RETURNING id, name, email`,
+      [email.trim()]
+    );
+    if (rows.length === 0) throw new Error(`Kein Konto mit ${email}.`);
+    // Kein Push mehr an Geräte eines deaktivierten Kontos
+    const tokens = await client.query('DELETE FROM device_tokens WHERE user_id = $1', [rows[0].id]);
+    await client.query('COMMIT');
+    console.log(`✓ Deaktiviert: ${rows[0].name} <${rows[0].email}>`);
+    console.log(`  Login und bestehende Sitzungen gesperrt, ${tokens.rowCount} Push-Token(s) entfernt.`);
+  } catch (err) {
+    await client.query('ROLLBACK');
+    throw err;
+  } finally {
+    client.release();
+  }
+}
+
+async function enable(email) {
+  if (!email) throw new UsageError();
+  const { rows } = await pool.query(
+    `UPDATE users SET disabled_at = NULL, updated_at = NOW()
+     WHERE lower(email) = lower($1) RETURNING name, email`,
+    [email.trim()]
+  );
+  if (rows.length === 0) throw new Error(`Kein Konto mit ${email}.`);
+  console.log(`✓ Wieder aktiv: ${rows[0].name} <${rows[0].email}>`);
+}
+
 class UsageError extends Error {}
 
-const COMMANDS = { list, add, 'reset-password': resetPassword };
+const COMMANDS = { list, add, 'reset-password': resetPassword, disable, enable };
 
 async function main() {
   const [command, ...args] = process.argv.slice(2);

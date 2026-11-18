@@ -107,7 +107,7 @@ router.post('/login', async (req, res) => {
 
     // Find user
     const result = await pool.query(
-      'SELECT id, email, name, password_hash, avatar_url, settings FROM users WHERE email = $1',
+      'SELECT id, email, name, password_hash, avatar_url, settings, disabled_at FROM users WHERE email = $1',
       [email]
     );
 
@@ -127,6 +127,15 @@ router.post('/login', async (req, res) => {
       return res.status(401).json({
         error: 'Unauthorized',
         message: 'Invalid email or password'
+      });
+    }
+
+    // Erst nach der Passwortprüfung verraten, dass das Konto deaktiviert ist
+    if (user.disabled_at) {
+      return res.status(403).json({
+        error: 'Forbidden',
+        code: 'ACCOUNT_DISABLED',
+        message: 'Dieses Konto ist deaktiviert. Bitte wende dich an den Betreiber.'
       });
     }
 
