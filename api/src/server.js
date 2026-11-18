@@ -11,6 +11,8 @@ const swaggerSpec = require('./swagger');
 const authenticate = require('./middleware/auth');
 const { optionalAuth } = require('./middleware/authJwt');
 const { requestLog } = require('./middleware/requestLog');
+const pool = require('../config/database');
+const { migrate, checkPrivileges } = require('./migrate');
 const mangaRoutes = require('./routes/manga');
 const authRoutes = require('./routes/auth');
 
@@ -98,9 +100,19 @@ app.use((err, req, res, next) => {
   });
 });
 
-// Start server
-const server = app.listen(PORT, '0.0.0.0', () => {
-  console.log(`
+// Start server: erst Schema aktualisieren und Rechte prüfen, dann lauschen
+let server;
+
+async function start() {
+  if (process.env.SKIP_MIGRATIONS === 'true') {
+    console.log('⚠️  SKIP_MIGRATIONS=true – Migrationen und Rechteprüfung übersprungen');
+  } else {
+    await migrate(pool);
+    await checkPrivileges(pool);
+  }
+
+  server = app.listen(PORT, '0.0.0.0', () => {
+    console.log(`
 ╔═══════════════════════════════════════════╗
 ║   🎌 Manga Inventory API Server          ║
 ╠═══════════════════════════════════════════╣
@@ -110,11 +122,18 @@ const server = app.listen(PORT, '0.0.0.0', () => {
 ║   Status:      Running                    ║
 ╚═══════════════════════════════════════════╝
   `);
+  });
+}
+
+start().catch((err) => {
+  console.error(`❌ Start abgebrochen: ${err.message}`);
+  process.exit(1);
 });
 
 // Graceful shutdown
 process.on('SIGTERM', () => {
   console.log('SIGTERM signal received: closing HTTP server');
+  if (!server) process.exit(0);
   server.close(() => {
     console.log('HTTP server closed');
     process.exit(0);

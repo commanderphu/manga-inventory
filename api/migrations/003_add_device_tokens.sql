@@ -26,7 +26,7 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
-CREATE TRIGGER update_device_token_modtime
+CREATE OR REPLACE TRIGGER update_device_token_modtime
     BEFORE UPDATE ON device_tokens
     FOR EACH ROW
     EXECUTE FUNCTION update_device_token_timestamp();

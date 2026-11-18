@@ -56,7 +56,7 @@ install-app: ## Flutter-Abhängigkeiten installieren
 
 ##@ Entwicklung
 
-.PHONY: dev api users frontend app app-prod
+.PHONY: dev api migrate users frontend app app-prod
 dev: db-check ## API und Frontend zusammen starten (gegen central_postgres)
 	@echo "API:      http://localhost:$(API_PORT)  (Swagger: /docs)"
 	@echo "Frontend: http://localhost:$(FRONTEND_PORT)"
@@ -64,6 +64,9 @@ dev: db-check ## API und Frontend zusammen starten (gegen central_postgres)
 
 api: ## Nur die API mit Hot-Reload (nodemon) gegen central_postgres
 	cd api && $(API_DEV_ENV) npm run dev
+
+migrate: ## Migrationen der Dev-DB ausführen (macht die API beim Start auch selbst)
+	cd api && $(API_DEV_ENV) npm run -s migrate -- $(ARGS)
 
 users: ## Konten der Dev-DB verwalten, z. B. make users ARGS='add a@b.de "Name"'
 	cd api && $(API_DEV_ENV) npm run -s users -- $(or $(ARGS),list)

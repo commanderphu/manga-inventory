@@ -46,14 +46,7 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
-CREATE TRIGGER trigger_update_users_updated_at
+CREATE OR REPLACE TRIGGER trigger_update_users_updated_at
     BEFORE UPDATE ON users
     FOR EACH ROW
     EXECUTE FUNCTION update_users_updated_at();
-
--- Sample users (you can change these later)
--- Password is 'manga123' for both (hashed with bcrypt)
-INSERT INTO users (email, name, password_hash) VALUES
-    ('user1@manga.app', 'User 1', '$2b$10$YourHashHere'), -- Will be replaced with real hash
-    ('user2@manga.app', 'User 2', '$2b$10$YourHashHere')
-ON CONFLICT (email) DO NOTHING;

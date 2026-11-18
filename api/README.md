@@ -230,6 +230,23 @@ npm run dev
 
 Siehe `.env.example` für alle verfügbaren Konfigurationen. Pflicht sind `DB_HOST`, `DB_NAME`, `DB_USER`, `DB_PASSWORD`, `API_KEY` und `JWT_SECRET`; fehlt eine davon, startet die API nicht.
 
+### Datenbank-Migrationen
+
+Die API führt beim Start alle fehlenden Migrationen aus `migrations/` aus, in Reihenfolge und jede in einer eigenen Transaktion. Welche schon gelaufen sind, steht in der Tabelle `schema_migrations`. Schlägt eine fehl, wird sie zurückgerollt und die API startet nicht. Danach prüft die API, ob ihr DB-Benutzer auf allen Tabellen lesen und schreiben darf.
+
+```bash
+npm run migrate -- status   # was ist gelaufen, was steht aus
+npm run migrate             # von Hand ausführen
+```
+
+Neue Migrationen: `NNN_beschreibung.sql`, fortlaufend nummeriert, eine bereits ausgelieferte Datei nie mehr ändern. Mit `SKIP_MIGRATIONS=true` startet die API ohne Migrationen (nur für Tests ohne Datenbank).
+
+**Installationen von vor November 2026:** Tabellen, die von Hand als Superuser angelegt wurden, gehören nicht dem API-Benutzer. Einmalig als Superuser ausführen:
+
+```bash
+psql -U <superuser> -d manga_inventory -v api_user=<DB_USER> -f ../scripts/database/owner-an-api-benutzer.sql   # liegt im Repo, nicht im Image
+```
+
 ### Konten verwalten
 
 Standardmäßig ist die Registrierung geschlossen (`REGISTRATION_MODE=closed`). Konten legt der Betreiber an:
