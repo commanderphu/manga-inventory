@@ -17,4 +17,19 @@ function requireEnv(names) {
   }
 }
 
-module.exports = { requireEnv };
+const REGISTRATION_MODES = ['open', 'closed'];
+
+/**
+ * Wer darf Konten anlegen? `closed` (Standard): nur der Betreiber per
+ * `npm run users -- add`. `open`: jeder über POST /api/auth/register.
+ */
+function registrationMode() {
+  const mode = (process.env.REGISTRATION_MODE || 'closed').trim().toLowerCase();
+  if (!REGISTRATION_MODES.includes(mode)) {
+    console.error(`❌ REGISTRATION_MODE="${process.env.REGISTRATION_MODE}" ist ungültig, erlaubt: ${REGISTRATION_MODES.join(', ')}`);
+    process.exit(1);
+  }
+  return mode;
+}
+
+module.exports = { requireEnv, registrationMode };

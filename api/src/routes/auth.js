@@ -4,12 +4,23 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const pool = require('../../config/database');
 const { verifyToken } = require('../middleware/authJwt');
+const { registrationMode } = require('../../config/env');
+
+const REGISTRATION_OPEN = registrationMode() === 'open';
 
 /**
  * POST /api/auth/register
  * Register a new user
  */
 router.post('/register', async (req, res) => {
+  if (!REGISTRATION_OPEN) {
+    return res.status(403).json({
+      error: 'Forbidden',
+      code: 'REGISTRATION_CLOSED',
+      message: 'Die Registrierung ist auf diesem Server geschlossen. Bitte den Betreiber um ein Konto.'
+    });
+  }
+
   try {
     const { email, name, password } = req.body;
 

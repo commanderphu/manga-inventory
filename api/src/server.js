@@ -1,4 +1,4 @@
-const { requireEnv } = require('../config/env');
+const { requireEnv, registrationMode } = require('../config/env');
 requireEnv(['API_KEY', 'JWT_SECRET']);
 
 const express = require('express');
@@ -106,6 +106,7 @@ const server = app.listen(PORT, '0.0.0.0', () => {
 ╠═══════════════════════════════════════════╣
 ║   Port:        ${PORT}                    ║
 ║   Environment: ${process.env.NODE_ENV || 'development'}         ║
+║   Registrierung: ${registrationMode()}
 ║   Status:      Running                    ║
 ╚═══════════════════════════════════════════╝
   `);

@@ -221,6 +221,7 @@ const options = {
         post: {
           tags: ['Auth'],
           summary: 'Neuen Nutzer registrieren',
+          description: 'Nur bei REGISTRATION_MODE=open. Standard ist closed, dann legt der Betreiber Konten mit `npm run users -- add` an.',
           requestBody: {
             required: true,
             content: {
@@ -239,6 +240,7 @@ const options = {
           },
           responses: {
             201: { description: 'Nutzer erstellt + JWT Token' },
+            403: { description: 'Registrierung geschlossen (code: REGISTRATION_CLOSED)' },
             409: { description: 'E-Mail bereits registriert' },
           },
         },

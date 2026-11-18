@@ -228,7 +228,22 @@ npm run dev
 
 ### Environment Variables
 
-Siehe `.env.example` für alle verfügbaren Konfigurationen.
+Siehe `.env.example` für alle verfügbaren Konfigurationen. Pflicht sind `DB_HOST`, `DB_NAME`, `DB_USER`, `DB_PASSWORD`, `API_KEY` und `JWT_SECRET`; fehlt eine davon, startet die API nicht.
+
+### Konten verwalten
+
+Standardmäßig ist die Registrierung geschlossen (`REGISTRATION_MODE=closed`). Konten legt der Betreiber an:
+
+```bash
+npm run users -- list
+npm run users -- add anna@example.org "Anna"
+npm run users -- reset-password anna@example.org
+
+# im Container
+docker exec <container> npm run users -- list
+```
+
+Das Passwort wird zufällig erzeugt und nur einmal angezeigt. Mit `REGISTRATION_MODE=open` kann sich jeder über die App registrieren.
 
 ---
 
